@@ -1,4 +1,3 @@
-
 /* =========================
 🔥 FIREBASE CONFIG
 ========================= */
@@ -16,54 +15,26 @@ const db = firebase.firestore();
 /* ================= ADMINS ================= */
 const admins = ["bm015059@gmail.com"];
 
-/* ================= MODAL FIX ================= */
-function updateAuthUI(user) {
-  const btn = document.getElementById("authBtn");
-  if (!btn) return;
-
-  // NOT LOGGED IN
-  if (!user) {
-    btn.innerHTML = "Sign in";
-    btn.onclick = openAuth;
-    return;
-  }
-
-  // GOOGLE LOGIN
-  if (user.photoURL) {
-    btn.innerHTML = `
-      <img src="${user.photoURL}" 
-      style="width:25px;height:25px;border-radius:50%;vertical-align:middle;">
-      ${user.displayName || "User"}
-    `;
-    btn.onclick = () => auth.signOut();
-    return;
-  }
-
-  // EMAIL LOGIN
-  btn.innerHTML = `
-    <span style="display:inline-block;width:25px;height:25px;border-radius:50%;
-    background:#ccc;vertical-align:middle;"></span>
-    Profile
-  `;
-  btn.onclick = () => auth.signOut();
+/* ================= AUTH MODAL ================= */
+function openAuth(){
+  document.getElementById("authModal").style.display = "flex";
 }
 
 function closeAuth(){
   document.getElementById("authModal").style.display = "none";
 }
 
-/* ================= FORCE SIGN UP FIRST FLOW ================= */
+/* ================= SIGN UP ================= */
 function emailSignup(){
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => {
-      alert("Account created! Now sign in.");
-    })
+    .then(() => alert("Account created! Now sign in."))
     .catch(err => alert(err.message));
 }
 
+/* ================= LOGIN ================= */
 function emailLogin(){
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -73,7 +44,7 @@ function emailLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= GOOGLE FIX (POPUP NOT REDIRECT) ================= */
+/* ================= GOOGLE LOGIN ================= */
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -82,31 +53,57 @@ function googleLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= ADMIN BUTTON ================= */
+/* ================= PROFILE UI ================= */
+function updateAuthUI(user) {
+  const btn = document.getElementById("authBtn");
+  if (!btn) return;
+
+  if (!user) {
+    btn.innerHTML = "Sign in";
+    btn.onclick = openAuth;
+    return;
+  }
+
+  if (user.photoURL) {
+    btn.innerHTML = `
+      <img src="${user.photoURL}" 
+      style="width:25px;height:25px;border-radius:50%;vertical-align:middle;">
+    `;
+  } else {
+    btn.innerHTML = "Profile";
+  }
+
+  btn.onclick = null;
+}
+
+/* ================= AUTH STATE (FIXED - ONLY ONE) ================= */
 auth.onAuthStateChanged(user => {
 
   updateAuthUI(user);
 
-  const btn = document.getElementById("addBtn");
+  const addBtn = document.getElementById("addBtn");
 
-  if (!btn) return;
+  if (!addBtn) return;
 
   if (user && admins.includes(user.email)) {
-    btn.style.display = "flex";
+    addBtn.style.display = "flex";
   } else {
-    btn.style.display = "none";
+    addBtn.style.display = "none";
   }
 });
 
-/* ================= UPLOAD ================= */
+/* ================= UPLOAD IMAGE (FIXED CLOUDINARY) ================= */
 async function uploadImage(){
+
   const file = document.getElementById("file").files[0];
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
 
+  if (!file) return alert("Select a file first");
+
   const form = new FormData();
   form.append("file", file);
-  form.append("ml_default", "dlc75iidz");
+  form.append("upload_preset", "ml_default"); // FIXED
 
   const res = await fetch(
     "https://api.cloudinary.com/v1_1/YOUR_CLOUD/image/upload",
@@ -127,17 +124,17 @@ async function uploadImage(){
 
 /* ================= LOAD GALLERY ================= */
 function loadGallery(){
-  const gallery = document.getElementById("gallery");
 
+  const gallery = document.getElementById("gallery");
   if (!gallery) return;
 
   db.collection("gallery")
     .orderBy("createdAt","desc")
-    .onSnapshot(snap => {
+    .onSnapshot(snapshot => {
 
       gallery.innerHTML = "";
 
-      snap.forEach(doc => {
+      snapshot.forEach(doc => {
         const d = doc.data();
 
         const div = document.createElement("div");
@@ -166,28 +163,17 @@ function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
 
-/* ================= SHOW + BUTTON ONLY FOR ADMINS ================= */
-auth.onAuthStateChanged(user => {
+/* ================= + BUTTON TOGGLE ================= */
+document.addEventListener("DOMContentLoaded", () => {
 
-  const addBtn = document.getElementById("addBtn");
+  const btn = document.getElementById("addBtn");
+  const box = document.getElementById("uploadBox");
 
-  if (!addBtn) return;
+  if (!btn || !box) return;
 
-  if (user && admins.includes(user.email)) {
-    addBtn.style.display = "flex";
-  } else {
-    addBtn.style.display = "none";
-  }
-});
-
-/* ================= TOGGLE UPLOAD BOX ================= */
-if (document.getElementById("addBtn")) {
-  document.getElementById("addBtn").onclick = () => {
-    const box = document.getElementById("uploadBox");
-
-    if (!box) return;
-
+  btn.onclick = () => {
     box.style.display =
       box.style.display === "block" ? "none" : "block";
   };
-}
+
+});
