@@ -11,15 +11,19 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= SAFE START (prevents admin flicker) ================= */
+/* ================= SAFE INIT ================= */
 document.addEventListener("DOMContentLoaded", () => {
+
   const addBtn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
+  const searchInput = document.getElementById("searchInput");
 
   if (addBtn) addBtn.style.display = "none";
   if (box) box.style.display = "none";
 
   loadGallery();
+  setupSearch(); // live search
+
 });
 
 /* ================= AUTH ================= */
@@ -120,7 +124,10 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url) return alert("Upload failed");
+    if (!data.secure_url) {
+      console.log(data);
+      return alert("Upload failed");
+    }
 
     await db.collection("gallery").add({
       title,
@@ -137,11 +144,13 @@ async function uploadImage(){
   }
 }
 
-/* ================= GALLERY ================= */
+/* ================= LOAD GALLERY ================= */
 
 function loadGallery(){
 
   const gallery = document.getElementById("gallery");
+  const loading = document.getElementById("loadingText");
+
   if (!gallery) return;
 
   db.collection("gallery")
@@ -149,6 +158,8 @@ function loadGallery(){
     .onSnapshot(snapshot => {
 
       gallery.innerHTML = "";
+
+      if (loading) loading.style.display = "none";
 
       snapshot.forEach(doc => {
 
@@ -207,16 +218,17 @@ function closeModal(){
   const modal = document.getElementById("modal");
   if (modal) modal.style.display = "none";
 }
-document.addEventListener("DOMContentLoaded", () => {
+
+/* ================= LIVE SEARCH (FIXED) ================= */
+
+function setupSearch(){
 
   const searchInput = document.getElementById("searchInput");
-
   if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
 
     const value = searchInput.value.toLowerCase().trim();
-
     const items = document.querySelectorAll(".item");
 
     items.forEach(item => {
@@ -230,9 +242,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   });
+}
 
-});
-/* ================= TOGGLE UPLOAD ================= */
+/* ================= TOGGLE UPLOAD BOX ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
