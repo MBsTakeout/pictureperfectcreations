@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head> 
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>Picture Perfect Creations</title>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="images/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -16,18 +18,55 @@
 </head>
 <body>
 
-<h1>Picture Perfect Creations</h1>
-
-<!-- LOGIN -->
-<div class="login">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <button onclick="logout()">Logout</button>
+<!-- 🍪 COOKIE -->
+<div id="cookieBanner" class="cookie">
+  <p>We use cookies to improve your experience ✨</p>
+  <button onclick="acceptCookies()">Accept</button>
+  <button onclick="rejectCookies()">Reject</button>
 </div>
 
-<!-- ADMIN BUTTON -->
-<div id="addBtn" style="display:none; font-size:40px; cursor:pointer;">➕</div>
+<!-- HEADER -->
+<header>
+  <h1>Picture Perfect Creations</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#gallery">Gallery</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <button onclick="toggleDarkMode()">🌙</button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h2>✨ Luxury Custom Creations</h2>
+  <p>Vinyl • Bobo Balloons • Boards • Stickers • Wedding Cards</p>
+</section>
+
+<!-- INFO -->
+<section class="grid-info">
+  <div>🎨 Custom Designs</div>
+  <div>🎈 Event Decor</div>
+  <div>💌 Wedding Stationery</div>
+  <div>✨ Premium Quality</div>
+</section>
+
+<!-- 🔐 LOGIN -->
+<section class="login">
+  <h2>Admin Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+  <button onclick="logout()">Logout</button>
+</section>
+
+<!-- ➕ ADMIN BUTTON -->
+<div id="addBtn" style="display:none; font-size:40px; cursor:pointer; text-align:center;">
+  ➕
+</div>
 
 <!-- UPLOAD PANEL -->
 <div id="uploadBox" style="display:none;">
@@ -46,11 +85,27 @@
   <button onclick="uploadImage()">Upload</button>
 </div>
 
-<!-- GALLERY -->
-<div id="gallery"></div>
+<!-- 🖼️ GALLERY -->
+<section id="gallery"></section>
 
+<!-- ABOUT -->
+<section class="about">
+  <h2>About Us</h2>
+  <p>We create high-end personalised designs for events, weddings and celebrations.</p>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Ready to create something amazing?</h2>
+  <a href="contact.html">Contact Us</a>
+</section>
+
+<footer>© 2026 Picture Perfect Creations</footer>
+
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
+<!-- TOGGLE UPLOAD BOX -->
 <script>
 document.getElementById("addBtn").onclick = () => {
   const box = document.getElementById("uploadBox");
