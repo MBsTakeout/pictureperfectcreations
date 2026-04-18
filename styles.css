@@ -1,22 +1,23 @@
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
-background:#f7f7f7;
+background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
-/* ================= HEADER ================= */
+/* ================= HEADER (ALL PAGES SAME) ================= */
 
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px 20px;
-background:white;
-box-shadow:0 2px 15px rgba(0,0,0,0.08);
+background:rgba(255,255,255,0.85);
+backdrop-filter:blur(10px);
 position:sticky;
 top:0;
 z-index:10;
+box-shadow:0 2px 15px rgba(0,0,0,0.05);
 }
 
 nav a{
@@ -33,7 +34,7 @@ color:#ff4d6d;
 
 /* ================= BUTTONS ================= */
 
-.login-btn, .btn, button{
+button, .btn, .login-btn{
 padding:10px 16px;
 border:none;
 border-radius:10px;
@@ -43,28 +44,68 @@ color:white;
 transition:0.3s;
 }
 
-.login-btn:hover, .btn:hover, button:hover{
+button:hover, .btn:hover, .login-btn:hover{
 transform:scale(1.05);
 background:#ff4d6d;
 }
 
-/* ================= HERO ================= */
+/* ================= HERO (HOME + CONTACT MATCH STYLE) ================= */
 
-.hero{
-height:70vh;
+.hero, .contact-hero{
+height:60vh;
 display:flex;
-justify-content:center;
+flex-direction:column;
 align-items:center;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+justify-content:center;
 text-align:center;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+padding:20px;
 }
 
 .hero-card{
 background:white;
 padding:40px;
 border-radius:20px;
-animation:fadeIn 0.8s ease;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
+animation:fadeIn 0.8s ease;
+}
+
+/* ================= CONTACT CARD ================= */
+
+.contact-card{
+max-width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+animation:fadeIn 0.5s ease;
+}
+
+.contact-card input,
+.contact-card textarea{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+/* Instagram button */
+
+.insta-btn{
+display:inline-block;
+margin-top:15px;
+padding:12px 18px;
+background:#E1306C;
+color:white;
+border-radius:12px;
+text-decoration:none;
+transition:0.3s;
+}
+
+.insta-btn:hover{
+transform:scale(1.05);
 }
 
 /* ================= GALLERY ================= */
@@ -82,7 +123,7 @@ border-radius:15px;
 overflow:hidden;
 box-shadow:0 5px 20px rgba(0,0,0,0.08);
 transition:0.3s;
-animation:fadeIn 0.5s ease;
+animation:fadeIn 0.4s ease;
 }
 
 .item:hover{
@@ -111,7 +152,7 @@ max-width:80%;
 border-radius:10px;
 }
 
-/* ================= UPLOAD BUTTON ================= */
+/* ================= + BUTTON ================= */
 
 .add-btn{
 position:fixed;
@@ -148,19 +189,6 @@ box-shadow:0 10px 30px rgba(0,0,0,0.2);
 display:none;
 }
 
-/* ================= ADMIN CONTROLS ================= */
-
-.admin-controls{
-display:flex;
-gap:5px;
-padding:5px;
-}
-
-.admin-controls button{
-font-size:12px;
-padding:5px 8px;
-}
-
 /* ================= PROFILE ================= */
 
 .avatar{
@@ -169,7 +197,7 @@ height:25px;
 border-radius:50%;
 }
 
-/* ================= ANIMATIONS ================= */
+/* ================= ANIMATION ================= */
 
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(10px);}
