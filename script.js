@@ -1,131 +1,133 @@
-/* =====================================================
-PICTURE PERFECT CREATIONS - SCRIPT.JS (FIXED + CLEAN)
-===================================================== */
+/* =========================
+🔥 FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
 
-/* -------------------------
-🍪 COOKIE SYSTEM (FIXED)
-------------------------- */
+firebase.initializeApp(firebaseConfig);
 
-function checkCookies() {
-  const choice = localStorage.getItem("cookies");
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  const banner = document.getElementById("cookieBanner");
+/* =========================
+🔐 ADMIN EMAILS
+========================= */
+const admins = [
+  "your@email.com"
+];
 
-  if (!banner) return;
+/* =========================
+🔐 LOGIN SYSTEM
+========================= */
+function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  if (choice === "yes" || choice === "no") {
-    banner.style.display = "none";
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(err => alert(err.message));
+}
+
+function logout() {
+  auth.signOut();
+}
+
+/* =========================
+👤 CHECK ADMIN
+========================= */
+auth.onAuthStateChanged(user => {
+  const btn = document.getElementById("addBtn");
+
+  if (user && admins.includes(user.email)) {
+    btn.style.display = "block";
   } else {
-    banner.style.display = "block";
+    btn.style.display = "none";
   }
-}
-
-function acceptCookies() {
-  localStorage.setItem("cookies", "yes");
-  document.getElementById("cookieBanner").style.display = "none";
-}
-
-function rejectCookies() {
-  localStorage.setItem("cookies", "no");
-  document.getElementById("cookieBanner").style.display = "none";
-}
-
-
-/* -------------------------
-🌙 DARK MODE (SAVED)
-------------------------- */
-
-function toggleDarkMode() {
-  document.body.classList.toggle("dark-mode");
-
-  if (document.body.classList.contains("dark-mode")) {
-    localStorage.setItem("darkMode", "on");
-  } else {
-    localStorage.setItem("darkMode", "off");
-  }
-}
-
-function loadDarkMode() {
-  const mode = localStorage.getItem("darkMode");
-
-  if (mode === "on") {
-    document.body.classList.add("dark-mode");
-  }
-}
-
-
-/* -------------------------
-🖼️ GALLERY FILTER
-------------------------- */
-
-function filter(category) {
-  const items = document.querySelectorAll(".item");
-
-  items.forEach((item) => {
-    if (category === "all") {
-      item.style.display = "block";
-    } else {
-      item.style.display = item.classList.contains(category)
-        ? "block"
-        : "none";
-    }
-  });
-}
-
-
-/* -------------------------
-🔍 SEARCH FUNCTION
-------------------------- */
-
-function searchItems() {
-  const input = document.getElementById("search");
-  if (!input) return;
-
-  const value = input.value.toLowerCase();
-  const items = document.querySelectorAll(".item");
-
-  items.forEach((item) => {
-    const text = item.innerText.toLowerCase();
-
-    if (text.includes(value)) {
-      item.style.display = "block";
-    } else {
-      item.style.display = "none";
-    }
-  });
-}
-
-
-/* -------------------------
-🖼️ IMAGE POPUP (MODAL)
-------------------------- */
-
-function openModal(el) {
-  const modal = document.getElementById("modal");
-  const modalImg = document.getElementById("modalImg");
-
-  if (!modal || !modalImg) return;
-
-  const img = el.querySelector("img");
-
-  modal.style.display = "flex";
-  modalImg.src = img.src;
-}
-
-function closeModal() {
-  const modal = document.getElementById("modal");
-
-  if (modal) {
-    modal.style.display = "none";
-  }
-}
-
-
-/* -------------------------
-🚀 INIT (RUN ON PAGE LOAD)
-------------------------- */
-
-document.addEventListener("DOMContentLoaded", () => {
-  checkCookies();
-  loadDarkMode();
 });
+
+/* =========================
+☁️ CLOUDINARY SETTINGS
+========================= */
+const CLOUD_NAME = "YOUR_CLOUD_NAME";
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+
+/* =========================
+📸 UPLOAD IMAGE (FILE → CLOUDINARY)
+========================= */
+async function uploadImage() {
+  const file = document.getElementById("file").files[0];
+  const title = document.getElementById("title").value;
+  const category = document.getElementById("category").value;
+
+  if (!file || !title || !category) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  try {
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await res.json();
+
+    if (!data.secure_url) {
+      alert("Upload failed");
+      return;
+    }
+
+    // Save to Firebase
+    await db.collection("gallery").add({
+      title,
+      category,
+      imageUrl: data.secure_url,
+      createdAt: Date.now()
+    });
+
+    alert("Uploaded!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Upload error");
+  }
+}
+
+/* =========================
+🖼️ LOAD GALLERY
+========================= */
+function loadGallery() {
+  db.collection("gallery")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const div = document.createElement("div");
+        div.className = "item";
+
+        div.innerHTML = `
+          <img src="${data.imageUrl}" width="200">
+          <h3>${data.title}</h3>
+          <p>${data.category}</p>
+        `;
+
+        gallery.appendChild(div);
+      });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", loadGallery);
