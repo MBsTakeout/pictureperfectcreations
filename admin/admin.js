@@ -1,10 +1,7 @@
 const WORKER_URL = "https://pictureperfect-admin-api.pictureperfectcreations.workers.dev";
 
-// LOGIN
 function login() {
   const pass = document.getElementById("pass").value;
-
-  console.log("Login clicked:", pass);
 
   if (pass === "admin123") {
     document.getElementById("loginBox").style.display = "none";
@@ -14,7 +11,6 @@ function login() {
   }
 }
 
-// UPLOAD
 async function upload() {
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
@@ -22,7 +18,7 @@ async function upload() {
   const status = document.getElementById("status");
 
   if (!title || !category || !file) {
-    alert("Please fill all fields");
+    alert("Fill all fields");
     return;
   }
 
@@ -44,16 +40,17 @@ async function upload() {
         })
       });
 
+      const data = await res.json().catch(() => null);
+
       if (res.ok) {
-        status.innerText = "✅ Successfully uploaded!";
-        document.getElementById("title").value = "";
-        document.getElementById("image").value = "";
+        status.innerText = "✅ Uploaded successfully!";
       } else {
         status.innerText = "❌ Upload failed";
+        console.log(data);
       }
     } catch (err) {
+      status.innerText = "❌ Server error";
       console.error(err);
-      status.innerText = "❌ Error connecting to server";
     }
   };
 
