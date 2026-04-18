@@ -11,7 +11,18 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= AUTH MODAL ================= */
+/* ================= SAFE START (prevents admin flicker) ================= */
+document.addEventListener("DOMContentLoaded", () => {
+  const addBtn = document.getElementById("addBtn");
+  const box = document.getElementById("uploadBox");
+
+  if (addBtn) addBtn.style.display = "none";
+  if (box) box.style.display = "none";
+
+  loadGallery();
+});
+
+/* ================= AUTH ================= */
 
 function openAuth(){
   const modal = document.getElementById("authModal");
@@ -23,24 +34,18 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
-/* ================= SIGN UP ================= */
-
 function emailSignup(){
-
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
   if (!email || !pass) return alert("Fill in all fields");
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created! Now sign in."))
+    .then(() => alert("Account created!"))
     .catch(err => alert(err.message));
 }
 
-/* ================= LOGIN ================= */
-
 function emailLogin(){
-
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
@@ -49,10 +54,7 @@ function emailLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= GOOGLE LOGIN ================= */
-
 function googleLogin(){
-
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
@@ -60,13 +62,11 @@ function googleLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= LOGOUT ================= */
-
 function logout(){
   auth.signOut();
 }
 
-/* ================= UI UPDATE ================= */
+/* ================= UI ================= */
 
 function updateUI(user){
 
@@ -80,7 +80,7 @@ function updateUI(user){
       btn.onclick = openAuth;
     } else {
       btn.innerHTML = user.photoURL
-        ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
+        ? `<img src="${user.photoURL}" class="avatar">`
         : "Profile";
 
       btn.onclick = logout;
@@ -92,8 +92,6 @@ function updateUI(user){
       (user && admins.includes(user.email)) ? "flex" : "none";
   }
 }
-
-/* ================= AUTH STATE ================= */
 
 auth.onAuthStateChanged(user => {
   updateUI(user);
@@ -122,14 +120,11 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url){
-      console.log(data);
-      return alert("Upload failed");
-    }
+    if (!data.secure_url) return alert("Upload failed");
 
     await db.collection("gallery").add({
-      title: title,
-      category: category,
+      title,
+      category,
       imageUrl: data.secure_url,
       createdAt: Date.now()
     });
@@ -142,7 +137,7 @@ async function uploadImage(){
   }
 }
 
-/* ================= LOAD GALLERY ================= */
+/* ================= GALLERY ================= */
 
 function loadGallery(){
 
@@ -161,13 +156,13 @@ function loadGallery(){
         const id = doc.id;
 
         const div = document.createElement("div");
-        div.className = "item " + (d.category || "");
+        div.className = `item ${d.category || ""}`;
 
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title || ""}</p>
 
-          <div class="admin-controls" data-id="${id}">
+          <div class="admin-controls">
             <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
@@ -179,7 +174,7 @@ function loadGallery(){
     });
 }
 
-/* ================= EDIT ================= */
+/* ================= EDIT / DELETE ================= */
 
 async function editImage(id, oldTitle){
 
@@ -190,8 +185,6 @@ async function editImage(id, oldTitle){
     title: newTitle
   });
 }
-
-/* ================= DELETE ================= */
 
 async function deleteImage(id){
 
@@ -215,18 +208,15 @@ function closeModal(){
   if (modal) modal.style.display = "none";
 }
 
-/* ================= INIT ================= */
+/* ================= TOGGLE UPLOAD ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  loadGallery();
 
   const btn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
 
-  if (box) box.style.display = "none"; // 🔥 FIX: ALWAYS HIDDEN ON LOAD
-
   if (btn && box){
+
     btn.onclick = () => {
       box.style.display =
         box.style.display === "block" ? "none" : "block";
