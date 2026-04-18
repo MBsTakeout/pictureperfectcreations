@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Picture Perfect Admin</title>
+  <title>Admin Panel</title>
   <style>
     body {
       font-family: Arial;
       background: #0f0f0f;
       color: white;
       margin: 0;
-      padding: 0;
+      padding: 40px;
     }
 
-    .container {
-      max-width: 500px;
+    .box {
+      max-width: 400px;
       margin: auto;
-      padding: 40px;
     }
 
     input, select, button {
@@ -35,26 +34,20 @@
     #panel {
       display: none;
     }
-
-    h2 {
-      text-align: center;
-    }
   </style>
 </head>
 <body>
 
-<div class="container">
+<div class="box">
 
-  <!-- LOGIN -->
   <div id="loginBox">
     <h2>Admin Login</h2>
-    <input type="password" id="pass" placeholder="Enter password">
+    <input type="password" id="pass" placeholder="Password">
     <button onclick="login()">Login</button>
   </div>
 
-  <!-- ADMIN PANEL -->
   <div id="panel">
-    <h2>Upload New Work</h2>
+    <h2>Upload Work</h2>
 
     <input id="title" placeholder="Title">
 
