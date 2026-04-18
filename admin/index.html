@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Admin Panel</title>
-</head>
-<body>
-
-<h2>Login</h2>
-<input type="password" id="pass">
-<button onclick="login()">Login</button>
+<div id="loginBox">
+  <input type="password" id="pass">
+  <button onclick="login()">Login</button>
+</div>
 
 <div id="panel" style="display:none;">
-  <h2>Upload Work</h2>
-
   <input id="title" placeholder="Title">
 
   <select id="category">
@@ -26,8 +18,3 @@
 
   <button onclick="upload()">Upload</button>
 </div>
-
-<script src="admin.js"></script>
-
-</body>
-</html>
