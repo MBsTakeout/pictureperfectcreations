@@ -1,6 +1,3 @@
-/* =========================
-🔥 FIREBASE CONFIG
-========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
   authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
@@ -12,9 +9,10 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+/* ================= ADMINS ================= */
 const admins = ["bm015059@gmail.com"];
 
-/* ================= AUTH ================= */
+/* ================= AUTH MODAL ================= */
 function openAuth() {
   document.getElementById("authModal").style.display = "flex";
 }
@@ -23,13 +21,13 @@ function closeAuth() {
   document.getElementById("authModal").style.display = "none";
 }
 
-/* ================= SIGN UP / LOGIN FIXED ================= */
+/* ================= AUTH ================= */
 function emailSignup() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created! Now sign in"))
+    .then(() => alert("Account created. Now sign in."))
     .catch(err => alert(err.message));
 }
 
@@ -52,24 +50,29 @@ function googleLogin() {
 
 /* ================= UI UPDATE ================= */
 function updateUI(user) {
+
   const btn = document.getElementById("authBtn");
   const addBtn = document.getElementById("addBtn");
+  const box = document.getElementById("uploadBox");
 
   if (!btn) return;
 
   if (!user) {
     btn.innerHTML = "Sign in";
     btn.onclick = openAuth;
+
     if (addBtn) addBtn.style.display = "none";
     return;
   }
 
+  // PROFILE BUTTON
   btn.innerHTML = user.photoURL
-    ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%">`
-    : "Profile";
+    ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
+    : `<span style="opacity:0.6">Profile</span>`;
 
-  btn.onclick = closeAuth;
+  btn.onclick = () => auth.signOut();
 
+  // ADMIN + BUTTON
   if (addBtn) {
     addBtn.style.display = admins.includes(user.email) ? "flex" : "none";
   }
@@ -77,11 +80,12 @@ function updateUI(user) {
   toggleAdminControls(user);
 }
 
+/* ================= AUTH STATE ================= */
 auth.onAuthStateChanged(user => {
   updateUI(user);
 });
 
-/* ================= CLOUDINARY UPLOAD FIXED ================= */
+/* ================= CLOUDINARY UPLOAD ================= */
 async function uploadImage() {
 
   const file = document.getElementById("file").files[0];
@@ -92,9 +96,10 @@ async function uploadImage() {
 
   const form = new FormData();
   form.append("file", file);
-  form.append("dlc75iidz", "Hhggbbhj"); // MUST be unsigned in Cloudinary
+  form.append("upload_preset", "Hhggbbhj"); // MUST be unsigned
 
   try {
+
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
       { method: "POST", body: form }
@@ -109,13 +114,12 @@ async function uploadImage() {
 
     await db.collection("gallery").add({
       title: title || "Untitled",
-      category: category || "uncategorized",
+      category,
       imageUrl: data.secure_url,
       createdAt: Date.now()
     });
 
     alert("Uploaded!");
-    document.getElementById("uploadBox").style.display = "none";
 
   } catch (err) {
     console.error(err);
@@ -125,18 +129,20 @@ async function uploadImage() {
 
 /* ================= LOAD GALLERY ================= */
 function loadGallery() {
-  const gallery = document.getElementById("gallery");
-  const loading = document.getElementById("loadingText");
 
+  const gallery = document.getElementById("gallery");
   if (!gallery) return;
 
   db.collection("gallery")
     .orderBy("createdAt", "desc")
-    .onSnapshot(snap => {
+    .onSnapshot(snapshot => {
+
+      const loading = document.getElementById("loadingText");
+      if (loading) loading.style.display = "none";
 
       gallery.innerHTML = "";
 
-      snap.forEach(doc => {
+      snapshot.forEach(doc => {
         const d = doc.data();
         const id = doc.id;
 
@@ -156,31 +162,33 @@ function loadGallery() {
         gallery.appendChild(div);
       });
 
-      if (loading) loading.style.display = "none";
+      auth.currentUser && toggleAdminControls(auth.currentUser);
     });
 }
 
 /* ================= SEARCH ================= */
-function searchItems() {
-  const input = document.getElementById("search");
-  const value = input.value.toLowerCase();
-  const items = document.querySelectorAll(".item");
+function setupSearch() {
+  const input = document.getElementById("searchInput");
+  if (!input) return;
 
-  items.forEach(item => {
-    const text = item.innerText.toLowerCase();
-    item.style.display = text.includes(value) ? "block" : "none";
+  input.addEventListener("input", e => {
+    const val = e.target.value.toLowerCase();
+
+    document.querySelectorAll(".item").forEach(item => {
+      const text = item.innerText.toLowerCase();
+      item.style.display = text.includes(val) ? "block" : "none";
+    });
   });
 }
 
 /* ================= CATEGORY FILTER ================= */
-function filter(category) {
-  const items = document.querySelectorAll(".item");
-
-  items.forEach(item => {
-    item.style.display =
-      category === "all" || item.classList.contains(category)
-        ? "block"
-        : "none";
+function filterCategory(cat) {
+  document.querySelectorAll(".item").forEach(item => {
+    if (cat === "all") {
+      item.style.display = "block";
+    } else {
+      item.style.display = item.classList.contains(cat) ? "block" : "none";
+    }
   });
 }
 
@@ -196,17 +204,9 @@ async function editImage(id, oldTitle) {
 
 /* ================= DELETE ================= */
 async function deleteImage(id) {
-  if (!confirm("Delete this image?")) return;
+  if (!confirm("Delete image?")) return;
 
   await db.collection("gallery").doc(id).delete();
-}
-
-/* ================= ADMIN CONTROLS ================= */
-function toggleAdminControls(user) {
-  document.querySelectorAll(".admin-controls").forEach(el => {
-    el.style.display =
-      user && admins.includes(user.email) ? "flex" : "none";
-  });
 }
 
 /* ================= MODAL ================= */
@@ -219,7 +219,15 @@ function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-/* ================= INIT ================= */
+/* ================= ADMIN CONTROLS ================= */
+function toggleAdminControls(user) {
+  document.querySelectorAll(".admin-controls").forEach(el => {
+    el.style.display =
+      user && admins.includes(user.email) ? "flex" : "none";
+  });
+}
+
+/* ================= + BUTTON ================= */
 document.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("addBtn");
@@ -233,4 +241,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadGallery();
+  setupSearch();
 });
