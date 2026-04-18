@@ -13,21 +13,24 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* =========================
-🔐 ADMIN EMAILS
+CLOUDINARY
 ========================= */
-const admins = [
-  "your@email.com"
-];
+const CLOUD_NAME = "dlc75iidz";
+const UPLOAD_PRESET = "ml_default";
 
 /* =========================
-🔐 LOGIN SYSTEM
+ADMINS
+========================= */
+const admins = ["your@email.com"];
+
+/* =========================
+LOGIN
 ========================= */
 function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(err => alert(err.message));
+  auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  );
 }
 
 function logout() {
@@ -35,94 +38,72 @@ function logout() {
 }
 
 /* =========================
-👤 CHECK ADMIN
+ADMIN CHECK
 ========================= */
 auth.onAuthStateChanged(user => {
   const btn = document.getElementById("addBtn");
 
   if (user && admins.includes(user.email)) {
-    btn.style.display = "block";
+    btn.style.display = "flex";
   } else {
     btn.style.display = "none";
   }
 });
 
 /* =========================
-☁️ CLOUDINARY SETTINGS
-========================= */
-const CLOUD_NAME = "dlc75iidz";
-const UPLOAD_PRESET = "ml_default";
-
-/* =========================
-📸 UPLOAD IMAGE (FILE → CLOUDINARY)
+UPLOAD IMAGE
 ========================= */
 async function uploadImage() {
   const file = document.getElementById("file").files[0];
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
 
-  if (!file || !title || !category) {
-    alert("Fill all fields");
-    return;
-  }
+  if (!file || !title) return alert("Fill all fields");
 
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", UPLOAD_PRESET);
 
-  try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: formData
-      }
-    );
-
-    const data = await res.json();
-
-    if (!data.secure_url) {
-      alert("Upload failed");
-      return;
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    {
+      method: "POST",
+      body: formData
     }
+  );
 
-    // Save to Firebase
-    await db.collection("gallery").add({
-      title,
-      category,
-      imageUrl: data.secure_url,
-      createdAt: Date.now()
-    });
+  const data = await res.json();
 
-    alert("Uploaded!");
+  await db.collection("gallery").add({
+    title,
+    category,
+    imageUrl: data.secure_url,
+    createdAt: Date.now()
+  });
 
-  } catch (err) {
-    console.error(err);
-    alert("Upload error");
-  }
+  alert("Uploaded!");
 }
 
 /* =========================
-🖼️ LOAD GALLERY
+LOAD GALLERY
 ========================= */
 function loadGallery() {
   db.collection("gallery")
     .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
-
+    .onSnapshot(snap => {
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "";
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
+      snap.forEach(doc => {
+        const d = doc.data();
 
         const div = document.createElement("div");
         div.className = "item";
 
         div.innerHTML = `
-          <img src="${data.imageUrl}" width="200">
-          <h3>${data.title}</h3>
-          <p>${data.category}</p>
+          <img src="${d.imageUrl}" onclick="openImg('${d.imageUrl}')">
+          <h3>${d.title}</h3>
+          <p>${d.category}</p>
         `;
 
         gallery.appendChild(div);
@@ -130,4 +111,32 @@ function loadGallery() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", loadGallery);
+loadGallery();
+
+/* =========================
+MODALS
+========================= */
+function openLogin() {
+  loginModal.style.display = "flex";
+}
+
+function closeLogin() {
+  loginModal.style.display = "none";
+}
+
+function openImg(src) {
+  imgModal.style.display = "flex";
+  modalImg.src = src;
+}
+
+function closeImg() {
+  imgModal.style.display = "none";
+}
+
+/* =========================
+UPLOAD TOGGLE
+========================= */
+addBtn.onclick = () => {
+  uploadBox.style.display =
+    uploadBox.style.display === "block" ? "none" : "block";
+};
