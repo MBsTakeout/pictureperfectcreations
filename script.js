@@ -1,7 +1,7 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
-  authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
-  projectId: "pictureperfectcreations-5c37e"
+apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
+authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
+projectId: "pictureperfectcreations-5c37e"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -11,228 +11,124 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= AUTH MODAL ================= */
+/* ================= AUTH ================= */
 
 function openAuth(){
-  const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "flex";
+document.getElementById("authModal").style.display="flex";
 }
 
 function closeAuth(){
-  const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "none";
+document.getElementById("authModal").style.display="none";
 }
-
-/* ================= SIGN UP ================= */
-
-function emailSignup(){
-
-  const email = document.getElementById("email")?.value;
-  const pass = document.getElementById("password")?.value;
-
-  if (!email || !pass) return alert("Fill in all fields");
-
-  auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created! Now sign in."))
-    .catch(err => alert(err.message));
-}
-
-/* ================= LOGIN ================= */
-
-function emailLogin(){
-
-  const email = document.getElementById("email")?.value;
-  const pass = document.getElementById("password")?.value;
-
-  auth.signInWithEmailAndPassword(email, pass)
-    .then(() => closeAuth())
-    .catch(err => alert(err.message));
-}
-
-/* ================= GOOGLE LOGIN ================= */
 
 function googleLogin(){
-
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider)
-    .then(() => closeAuth())
-    .catch(err => alert(err.message));
+const provider=new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider).then(closeAuth);
 }
 
-/* ================= LOGOUT ================= */
+function emailSignup(){
+const email=document.getElementById("email").value;
+const pass=document.getElementById("password").value;
+auth.createUserWithEmailAndPassword(email,pass);
+}
+
+function emailLogin(){
+const email=document.getElementById("email").value;
+const pass=document.getElementById("password").value;
+auth.signInWithEmailAndPassword(email,pass).then(closeAuth);
+}
 
 function logout(){
-  auth.signOut();
+auth.signOut();
 }
 
-/* ================= UI UPDATE ================= */
+/* ================= UI ================= */
 
 function updateUI(user){
 
-  const btn = document.getElementById("authBtn");
-  const addBtn = document.getElementById("addBtn");
+const btn=document.getElementById("authBtn");
+const add=document.getElementById("addBtn");
 
-  /* LOGIN BUTTON */
-  if (btn){
-    if (!user){
-      btn.innerHTML = "Sign in";
-      btn.onclick = openAuth;
-    } else {
-      btn.innerHTML = user.photoURL
-        ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
-        : "Profile";
-
-      btn.onclick = logout;
-    }
-  }
-
-  /* + BUTTON ONLY FOR ADMINS + ONLY IN GALLERY PAGE */
-  if (addBtn){
-    if (user && admins.includes(user.email)){
-      addBtn.style.display = "flex";
-    } else {
-      addBtn.style.display = "none";
-    }
-  }
+if(btn){
+if(!user){
+btn.innerText="Sign in";
+btn.onclick=openAuth;
+}else{
+btn.innerText="Profile";
+btn.onclick=logout;
+}
 }
 
-/* ================= AUTH STATE ================= */
+if(add){
+add.style.display=(user && admins.includes(user.email))?"flex":"none";
+}
 
-auth.onAuthStateChanged(user => {
-  updateUI(user);
-});
+}
 
-/* ================= CLOUDINARY UPLOAD ================= */
+auth.onAuthStateChanged(updateUI);
+
+/* ================= UPLOAD ================= */
 
 async function uploadImage(){
 
-  const file = document.getElementById("file")?.files[0];
-  const title = document.getElementById("title")?.value || "Untitled";
-  const category = document.getElementById("category")?.value || "general";
+const file=document.getElementById("file").files[0];
+const title=document.getElementById("title").value;
+const category=document.getElementById("category").value;
 
-  if (!file) return alert("Select a file");
+if(!file)return alert("No file");
 
-  const form = new FormData();
-  form.append("file", file);
-  form.append("upload_preset", "Hhggbbhj");
+const form=new FormData();
+form.append("file",file);
+form.append("dlc75iidz","Hhggbbhj");
 
-  try {
+const res=await fetch("https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",{method:"POST",body:form});
+const data=await res.json();
 
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
-      { method: "POST", body: form }
-    );
+await db.collection("gallery").add({
+title,
+category,
+imageUrl:data.secure_url,
+createdAt:Date.now()
+});
 
-    const data = await res.json();
-
-    if (!data.secure_url){
-      console.log(data);
-      return alert("Upload failed");
-    }
-
-    await db.collection("gallery").add({
-      title,
-      category,
-      imageUrl: data.secure_url,
-      createdAt: Date.now()
-    });
-
-    alert("Uploaded!");
-
-  } catch (err){
-    console.error(err);
-    alert("Upload error");
-  }
 }
 
 /* ================= LOAD GALLERY ================= */
 
 function loadGallery(){
 
-  const gallery = document.getElementById("gallery");
-  if (!gallery) return;
+const gallery=document.getElementById("gallery");
+if(!gallery)return;
 
-  db.collection("gallery")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snapshot => {
+db.collection("gallery").orderBy("createdAt","desc").onSnapshot(snap=>{
 
-      gallery.innerHTML = "";
+gallery.innerHTML="";
 
-      snapshot.forEach(doc => {
+snap.forEach(doc=>{
+const d=doc.data();
 
-        const d = doc.data();
-        const id = doc.id;
+const div=document.createElement("div");
+div.className="item "+d.category;
 
-        const div = document.createElement("div");
-        div.className = `item ${d.category}`;
+div.innerHTML=`
+<img src="${d.imageUrl}" onclick="openModal(this)">
+<p style="padding:10px">${d.title}</p>
+`;
 
-        div.innerHTML = `
-          <img src="${d.imageUrl}" onclick="openModal(this)">
-          <p>${d.title}</p>
+gallery.appendChild(div);
+});
 
-          <div class="admin-controls" data-id="${id}">
-            <button onclick="editImage('${id}', '${d.title}')">Edit</button>
-            <button onclick="deleteImage('${id}')">Delete</button>
-          </div>
-        `;
+});
 
-        gallery.appendChild(div);
-      });
-
-    });
 }
-
-/* ================= EDIT ================= */
-
-async function editImage(id, oldTitle){
-
-  const newTitle = prompt("Edit title:", oldTitle);
-  if (!newTitle) return;
-
-  await db.collection("gallery").doc(id).update({
-    title: newTitle
-  });
-}
-
-/* ================= DELETE ================= */
-
-async function deleteImage(id){
-
-  if (!confirm("Delete this image?")) return;
-
-  await db.collection("gallery").doc(id).delete();
-}
-
-/* ================= MODAL ================= */
 
 function openModal(img){
-  const modal = document.getElementById("modal");
-  const modalImg = document.getElementById("modalImg");
-
-  if (modal) modal.style.display = "flex";
-  if (modalImg) modalImg.src = img.src;
+document.getElementById("modal").style.display="flex";
+document.getElementById("modalImg").src=img.src;
 }
 
 function closeModal(){
-  const modal = document.getElementById("modal");
-  if (modal) modal.style.display = "none";
+document.getElementById("modal").style.display="none";
 }
 
-/* ================= INIT ================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  loadGallery();
-
-  const btn = document.getElementById("addBtn");
-  const box = document.getElementById("uploadBox");
-
-  if (btn && box){
-    btn.onclick = () => {
-      box.style.display =
-        box.style.display === "block" ? "none" : "block";
-    };
-  }
-
-});
+document.addEventListener("DOMContentLoaded",loadGallery);
