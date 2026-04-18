@@ -1,6 +1,6 @@
 /* =========================
 🔥 FIREBASE CONFIG
-========================= */
+========================= */ 
 const firebaseConfig = {
   apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
   authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
