@@ -165,3 +165,29 @@ function openModal(img){
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
+
+/* ================= SHOW + BUTTON ONLY FOR ADMINS ================= */
+auth.onAuthStateChanged(user => {
+
+  const addBtn = document.getElementById("addBtn");
+
+  if (!addBtn) return;
+
+  if (user && admins.includes(user.email)) {
+    addBtn.style.display = "flex";
+  } else {
+    addBtn.style.display = "none";
+  }
+});
+
+/* ================= TOGGLE UPLOAD BOX ================= */
+if (document.getElementById("addBtn")) {
+  document.getElementById("addBtn").onclick = () => {
+    const box = document.getElementById("uploadBox");
+
+    if (!box) return;
+
+    box.style.display =
+      box.style.display === "block" ? "none" : "block";
+  };
+}
