@@ -1,13 +1,8 @@
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
-background:linear-gradient(135deg,#fdfbfb,#ebedee);
+background:#f7f7f7;
 color:#111;
-transition:0.4s;
-}
-
-html{
-scroll-behavior:smooth;
 }
 
 /* ================= HEADER ================= */
@@ -17,15 +12,15 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px 20px;
-background:rgba(255,255,255,0.85);
-backdrop-filter:blur(10px);
+background:white;
+box-shadow:0 2px 15px rgba(0,0,0,0.08);
 position:sticky;
 top:0;
 z-index:10;
 }
 
 nav a{
-margin:10px;
+margin:0 10px;
 text-decoration:none;
 color:#111;
 font-weight:500;
@@ -36,13 +31,30 @@ nav a:hover{
 color:#ff4d6d;
 }
 
+/* ================= BUTTONS ================= */
+
+.login-btn, .btn, button{
+padding:10px 16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#111;
+color:white;
+transition:0.3s;
+}
+
+.login-btn:hover, .btn:hover, button:hover{
+transform:scale(1.05);
+background:#ff4d6d;
+}
+
 /* ================= HERO ================= */
 
 .hero{
 height:70vh;
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 text-align:center;
 }
@@ -51,52 +63,16 @@ text-align:center;
 background:white;
 padding:40px;
 border-radius:20px;
+animation:fadeIn 0.8s ease;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
-animation:fade 1s ease;
-}
-
-.btn{
-padding:12px 25px;
-background:black;
-color:white;
-border-radius:10px;
-text-decoration:none;
-display:inline-block;
-transition:0.3s;
-}
-
-.btn:hover{
-transform:scale(1.05);
-}
-
-/* ================= GRID INFO ================= */
-
-.grid-info{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-padding:30px;
-}
-
-.info-card{
-background:white;
-padding:20px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-transition:0.3s;
-}
-
-.info-card:hover{
-transform:translateY(-5px);
 }
 
 /* ================= GALLERY ================= */
 
 .gallery{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
 padding:20px;
 }
 
@@ -104,9 +80,9 @@ padding:20px;
 background:white;
 border-radius:15px;
 overflow:hidden;
-box-shadow:0 10px 20px rgba(0,0,0,0.05);
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
 transition:0.3s;
-cursor:pointer;
+animation:fadeIn 0.5s ease;
 }
 
 .item:hover{
@@ -116,96 +92,6 @@ transform:scale(1.03);
 .item img{
 width:100%;
 display:block;
-}
-
-/* ================= SEARCH + FILTER ================= */
-
-#search{
-width:80%;
-margin:20px auto;
-display:block;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-.filters{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-.filters button{
-padding:10px 15px;
-border:none;
-border-radius:10px;
-background:#111;
-color:white;
-cursor:pointer;
-transition:0.3s;
-}
-
-.filters button:hover{
-transform:scale(1.05);
-background:#ff4d6d;
-}
-
-/* ================= CONTACT ================= */
-
-.contact-hero{
-text-align:center;
-padding:80px 20px;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-}
-
-.insta-btn{
-display:inline-block;
-margin-top:20px;
-padding:12px 20px;
-background:#E1306C;
-color:white;
-text-decoration:none;
-border-radius:12px;
-font-weight:600;
-transition:0.3s;
-}
-
-.insta-btn:hover{
-transform:scale(1.05);
-}
-
-.contact-card{
-max-width:500px;
-margin:40px auto;
-padding:30px;
-background:white;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-text-align:center;
-}
-
-input,textarea{
-width:100%;
-margin:10px 0;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-button{
-padding:10px 20px;
-background:black;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-transition:0.3s;
-}
-
-button:hover{
-transform:scale(1.05);
 }
 
 /* ================= MODAL ================= */
@@ -218,7 +104,6 @@ width:100%;height:100%;
 background:rgba(0,0,0,0.8);
 align-items:center;
 justify-content:center;
-z-index:999;
 }
 
 .modal img{
@@ -226,26 +111,7 @@ max-width:80%;
 border-radius:10px;
 }
 
-/* ================= COOKIE ================= */
-
-.cookie{
-position:fixed;
-bottom:0;
-width:100%;
-background:black;
-color:white;
-padding:10px;
-text-align:center;
-}
-
-/* ================= DARK MODE ================= */
-
-.dark-mode{
-background:#111;
-color:white;
-}
-
-/* ================= ADD BUTTON ================= */
+/* ================= UPLOAD BUTTON ================= */
 
 .add-btn{
 position:fixed;
@@ -254,24 +120,58 @@ right:20px;
 width:55px;
 height:55px;
 border-radius:50%;
-background:black;
+background:#111;
 color:white;
 font-size:30px;
 display:none;
 align-items:center;
 justify-content:center;
 cursor:pointer;
-z-index:999;
 transition:0.3s;
 }
 
 .add-btn:hover{
+background:#ff4d6d;
 transform:scale(1.1);
 }
 
-/* ================= ANIMATION ================= */
+/* ================= UPLOAD BOX ================= */
 
-@keyframes fade{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
+.upload-box{
+position:fixed;
+bottom:90px;
+right:20px;
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+display:none;
+}
+
+/* ================= ADMIN CONTROLS ================= */
+
+.admin-controls{
+display:flex;
+gap:5px;
+padding:5px;
+}
+
+.admin-controls button{
+font-size:12px;
+padding:5px 8px;
+}
+
+/* ================= PROFILE ================= */
+
+.avatar{
+width:25px;
+height:25px;
+border-radius:50%;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
 }
