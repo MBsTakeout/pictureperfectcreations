@@ -11,182 +11,228 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= AUTH ================= */
+/* ================= AUTH MODAL ================= */
+
 function openAuth(){
-  document.getElementById("authModal").style.display="flex";
+  const modal = document.getElementById("authModal");
+  if (modal) modal.style.display = "flex";
 }
 
 function closeAuth(){
-  document.getElementById("authModal").style.display="none";
+  const modal = document.getElementById("authModal");
+  if (modal) modal.style.display = "none";
 }
+
+/* ================= SIGN UP ================= */
 
 function emailSignup(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
 
-  auth.createUserWithEmailAndPassword(email,pass)
-    .then(()=>alert("Account created"))
-    .catch(e=>alert(e.message));
+  const email = document.getElementById("email")?.value;
+  const pass = document.getElementById("password")?.value;
+
+  if (!email || !pass) return alert("Fill in all fields");
+
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => alert("Account created! Now sign in."))
+    .catch(err => alert(err.message));
 }
+
+/* ================= LOGIN ================= */
 
 function emailLogin(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
 
-  auth.signInWithEmailAndPassword(email,pass)
-    .then(closeAuth)
-    .catch(e=>alert(e.message));
+  const email = document.getElementById("email")?.value;
+  const pass = document.getElementById("password")?.value;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => closeAuth())
+    .catch(err => alert(err.message));
 }
+
+/* ================= GOOGLE LOGIN ================= */
 
 function googleLogin(){
+
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).then(closeAuth);
+
+  auth.signInWithPopup(provider)
+    .then(() => closeAuth())
+    .catch(err => alert(err.message));
 }
+
+/* ================= LOGOUT ================= */
 
 function logout(){
   auth.signOut();
 }
 
-/* ================= UI ================= */
+/* ================= UI UPDATE ================= */
+
 function updateUI(user){
 
   const btn = document.getElementById("authBtn");
   const addBtn = document.getElementById("addBtn");
 
-  if(!user){
-    btn.innerHTML="Sign in";
-    btn.onclick=openAuth;
-    if(addBtn) addBtn.style.display="none";
-    return;
+  /* LOGIN BUTTON */
+  if (btn){
+    if (!user){
+      btn.innerHTML = "Sign in";
+      btn.onclick = openAuth;
+    } else {
+      btn.innerHTML = user.photoURL
+        ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
+        : "Profile";
+
+      btn.onclick = logout;
+    }
   }
 
-  btn.innerHTML = user.photoURL
-    ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%">`
-    : "Profile";
-
-  btn.onclick = toggleMenu;
-
-  if(addBtn){
-    addBtn.style.display = admins.includes(user.email) ? "flex":"none";
+  /* + BUTTON ONLY FOR ADMINS + ONLY IN GALLERY PAGE */
+  if (addBtn){
+    if (user && admins.includes(user.email)){
+      addBtn.style.display = "flex";
+    } else {
+      addBtn.style.display = "none";
+    }
   }
 }
 
-function toggleMenu(){
-  document.getElementById("profileMenu")?.classList.toggle("hidden");
-}
+/* ================= AUTH STATE ================= */
 
-auth.onAuthStateChanged(updateUI);
+auth.onAuthStateChanged(user => {
+  updateUI(user);
+});
 
-/* ================= UPLOAD ================= */
+/* ================= CLOUDINARY UPLOAD ================= */
+
 async function uploadImage(){
 
-  const file = document.getElementById("file").files[0];
-  const title = document.getElementById("title").value;
-  const category = document.getElementById("category").value;
+  const file = document.getElementById("file")?.files[0];
+  const title = document.getElementById("title")?.value || "Untitled";
+  const category = document.getElementById("category")?.value || "general";
 
-  if(!file) return alert("Select file");
+  if (!file) return alert("Select a file");
 
   const form = new FormData();
-  form.append("file",file);
-  form.append("upload_preset","Hhggbbhj");
+  form.append("file", file);
+  form.append("upload_preset", "Hhggbbhj");
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
-    {method:"POST",body:form}
-  );
+  try {
 
-  const data = await res.json();
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
+      { method: "POST", body: form }
+    );
 
-  if(!data.secure_url){
-    alert("Upload failed");
-    return;
-  }
+    const data = await res.json();
 
-  await db.collection("gallery").add({
-    title:title||"Untitled",
-    category,
-    imageUrl:data.secure_url,
-    createdAt:Date.now()
-  });
+    if (!data.secure_url){
+      console.log(data);
+      return alert("Upload failed");
+    }
 
-  alert("Uploaded!");
-}
-
-/* ================= GALLERY ================= */
-function loadGallery(){
-
-  const gallery=document.getElementById("gallery");
-  if(!gallery) return;
-
-  db.collection("gallery")
-  .orderBy("createdAt","desc")
-  .onSnapshot(snap=>{
-
-    gallery.innerHTML="";
-
-    snap.forEach(doc=>{
-
-      const d=doc.data();
-
-      const div=document.createElement("div");
-      div.className=`item ${d.category}`;
-
-      div.innerHTML=`
-        <img src="${d.imageUrl}" onclick="openModal(this)">
-        <p>${d.title}</p>
-
-        <div class="admin-controls">
-          <button onclick="editImage('${doc.id}','${d.title}')">Edit</button>
-          <button onclick="deleteImage('${doc.id}')">Delete</button>
-        </div>
-      `;
-
-      gallery.appendChild(div);
+    await db.collection("gallery").add({
+      title,
+      category,
+      imageUrl: data.secure_url,
+      createdAt: Date.now()
     });
 
+    alert("Uploaded!");
+
+  } catch (err){
+    console.error(err);
+    alert("Upload error");
+  }
+}
+
+/* ================= LOAD GALLERY ================= */
+
+function loadGallery(){
+
+  const gallery = document.getElementById("gallery");
+  if (!gallery) return;
+
+  db.collection("gallery")
+    .orderBy("createdAt","desc")
+    .onSnapshot(snapshot => {
+
+      gallery.innerHTML = "";
+
+      snapshot.forEach(doc => {
+
+        const d = doc.data();
+        const id = doc.id;
+
+        const div = document.createElement("div");
+        div.className = `item ${d.category}`;
+
+        div.innerHTML = `
+          <img src="${d.imageUrl}" onclick="openModal(this)">
+          <p>${d.title}</p>
+
+          <div class="admin-controls" data-id="${id}">
+            <button onclick="editImage('${id}', '${d.title}')">Edit</button>
+            <button onclick="deleteImage('${id}')">Delete</button>
+          </div>
+        `;
+
+        gallery.appendChild(div);
+      });
+
+    });
+}
+
+/* ================= EDIT ================= */
+
+async function editImage(id, oldTitle){
+
+  const newTitle = prompt("Edit title:", oldTitle);
+  if (!newTitle) return;
+
+  await db.collection("gallery").doc(id).update({
+    title: newTitle
   });
 }
 
+/* ================= DELETE ================= */
+
 async function deleteImage(id){
-  if(!confirm("Delete?")) return;
+
+  if (!confirm("Delete this image?")) return;
+
   await db.collection("gallery").doc(id).delete();
 }
 
-async function editImage(id,old){
-  const t=prompt("Edit title",old);
-  if(!t) return;
-  await db.collection("gallery").doc(id).update({title:t});
-}
-
-/* ================= FILTER ================= */
-function filterCategory(c){
-  document.querySelectorAll(".item").forEach(i=>{
-    i.style.display=(c==="all"||i.classList.contains(c))?"block":"none";
-  });
-}
-
-/* ================= SEARCH ================= */
-document.addEventListener("input",(e)=>{
-  if(e.target.id!=="searchInput") return;
-
-  const v=e.target.value.toLowerCase();
-
-  document.querySelectorAll(".item").forEach(i=>{
-    i.style.display=i.innerText.toLowerCase().includes(v)?"block":"none";
-  });
-});
-
 /* ================= MODAL ================= */
+
 function openModal(img){
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("modalImg").src=img.src;
+  const modal = document.getElementById("modal");
+  const modalImg = document.getElementById("modalImg");
+
+  if (modal) modal.style.display = "flex";
+  if (modalImg) modalImg.src = img.src;
 }
 
 function closeModal(){
-  document.getElementById("modal").style.display="none";
+  const modal = document.getElementById("modal");
+  if (modal) modal.style.display = "none";
 }
 
 /* ================= INIT ================= */
-document.addEventListener("DOMContentLoaded",()=>{
+
+document.addEventListener("DOMContentLoaded", () => {
+
   loadGallery();
+
+  const btn = document.getElementById("addBtn");
+  const box = document.getElementById("uploadBox");
+
+  if (btn && box){
+    btn.onclick = () => {
+      box.style.display =
+        box.style.display === "block" ? "none" : "block";
+    };
+  }
+
 });
