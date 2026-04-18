@@ -27,9 +27,24 @@
     <a href="gallery.html">Gallery</a>
     <a href="contact.html">Contact</a>
   </nav>
+
+  <button id="authBtn" onclick="openAuth()" class="login-btn">Sign in</button>
 </header>
 
-<!-- ================= ADMIN UPLOAD ================= -->
+<!-- ================= SEARCH ================= -->
+<input id="searchInput" placeholder="Search creations..." class="search-bar">
+
+<!-- ================= FILTERS ================= -->
+<div class="filters">
+  <button onclick="filterCategory('all')">All</button>
+  <button onclick="filterCategory('vinyl')">Vinyl</button>
+  <button onclick="filterCategory('balloon')">Balloons</button>
+  <button onclick="filterCategory('boards')">Boards</button>
+  <button onclick="filterCategory('stickers')">Stickers</button>
+  <button onclick="filterCategory('weddings')">Wedding</button>
+</div>
+
+<!-- ================= ADMIN + BUTTON ================= -->
 <div id="addBtn" class="add-btn">+</div>
 
 <div id="uploadBox" class="upload-box">
@@ -50,7 +65,7 @@
 
 </div>
 
-<!-- ================= LOADING ================= -->
+<!-- ================= LOADING TEXT ================= -->
 <p id="loadingText" style="text-align:center;">Loading gallery...</p>
 
 <!-- ================= GALLERY ================= -->
@@ -59,6 +74,27 @@
 <!-- ================= MODAL ================= -->
 <div id="modal" class="modal" onclick="closeModal()">
   <img id="modalImg">
+</div>
+
+<!-- ================= AUTH MODAL ================= -->
+<div id="authModal" class="modal">
+  <div class="modal-box">
+
+    <h2>Sign in</h2>
+
+    <button onclick="googleLogin()" class="google-btn">Continue with Google</button>
+
+    <hr>
+
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="emailLogin()">Sign in</button>
+    <button onclick="emailSignup()">Create account</button>
+
+    <p onclick="closeAuth()" style="cursor:pointer;">Close</p>
+
+  </div>
 </div>
 
 <script src="script.js"></script>
