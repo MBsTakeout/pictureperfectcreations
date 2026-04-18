@@ -1,3 +1,4 @@
+/* ================= GLOBAL ================= */
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
@@ -5,6 +6,7 @@ background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
+/* ================= HEADER ================= */
 header{
 display:flex;
 justify-content:space-between;
@@ -14,7 +16,7 @@ background:rgba(255,255,255,0.85);
 backdrop-filter:blur(10px);
 position:sticky;
 top:0;
-z-index:10;
+z-index:1000;
 }
 
 nav a{
@@ -24,6 +26,7 @@ color:#111;
 font-weight:500;
 }
 
+/* ================= LOGIN BUTTON ================= */
 .login-btn{
 background:black;
 color:white;
@@ -33,6 +36,7 @@ border-radius:8px;
 cursor:pointer;
 }
 
+/* ================= HERO ================= */
 .hero{
 height:70vh;
 display:flex;
@@ -59,7 +63,7 @@ display:inline-block;
 margin-top:10px;
 }
 
-/* ===== MODAL ===== */
+/* ================= MODAL ================= */
 .modal{
 display:none;
 position:fixed;
@@ -70,7 +74,7 @@ height:100%;
 background:rgba(0,0,0,0.7);
 align-items:center;
 justify-content:center;
-z-index:999;
+z-index:9999;
 }
 
 .modal-box{
@@ -103,6 +107,40 @@ background:#db4437;
 color:white;
 }
 
+/* ================= PROFILE DROPDOWN ================= */
+.profile-wrapper{
+position:relative;
+display:flex;
+align-items:center;
+}
+
+.profile-menu{
+display:none;
+position:absolute;
+top:45px;
+right:0;
+background:white;
+box-shadow:0 10px 20px rgba(0,0,0,0.15);
+border-radius:10px;
+overflow:hidden;
+min-width:120px;
+z-index:1000;
+}
+
+.profile-menu button{
+width:100%;
+padding:10px;
+border:none;
+background:white;
+cursor:pointer;
+text-align:left;
+}
+
+.profile-menu button:hover{
+background:#f2f2f2;
+}
+
+/* ================= ADMIN BUTTON ================= */
 .add-btn{
 position:fixed;
 bottom:20px;
@@ -117,8 +155,10 @@ display:none;
 align-items:center;
 justify-content:center;
 cursor:pointer;
+z-index:999;
 }
 
+/* ================= UPLOAD BOX ================= */
 .upload-box{
 display:none;
 position:fixed;
@@ -128,8 +168,10 @@ background:white;
 padding:15px;
 border-radius:10px;
 box-shadow:0 10px 20px rgba(0,0,0,0.2);
+z-index:999;
 }
 
+/* ================= GALLERY ================= */
 .gallery{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -149,31 +191,5 @@ width:100%;
 display:block;
 }
 
-.add-btn{
-position:fixed;
-bottom:20px;
-right:20px;
-width:55px;
-height:55px;
-border-radius:50%;
-background:black;
-color:white;
-font-size:30px;
-display:none;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-z-index:999;
-}
-
-.upload-box{
-display:none;
-position:fixed;
-bottom:90px;
-right:20px;
-background:white;
-padding:15px;
-border-radius:10px;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
-z-index:999;
-}
+/* ================= CLEAN UP ================= */
+/* removed duplicates + fixed layering issues */
