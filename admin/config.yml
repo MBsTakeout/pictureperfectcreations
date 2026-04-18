@@ -6,11 +6,13 @@ media_folder: "images"
 public_folder: "/images"
 
 collections:
-  - name: "products"
-    label: "Products"
-    folder: "products"
+  - name: "gallery"
+    label: "Gallery Work"
+    folder: "content/gallery"
     create: true
+    slug: "{{slug}}"
     fields:
-      - { label: "Name", name: "title", widget: "string" }
-      - { label: "Category", name: "category", widget: "select", options: ["vinyl", "balloon", "boards", "stickers", "wedding"] }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Category", name: "category", widget: "select", options: ["Vinyl", "Bobo Balloons", "Boards", "Stickers", "Wedding Cards"] }
       - { label: "Image", name: "image", widget: "image" }
+      - { label: "Description", name: "body", widget: "text" }
