@@ -9,12 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 
+<!-- Firebase (optional if auth used globally) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- ================= HEADER (MATCHED ACROSS ALL PAGES) ================= -->
 <header class="main-header">
+
   <h1 class="logo">Picture Perfect</h1>
 
   <nav class="nav-links">
@@ -26,10 +31,12 @@
   <button id="authBtn" class="login-btn" onclick="openAuth()">
     Sign in
   </button>
+
 </header>
 
 <!-- ================= HERO ================= -->
 <section class="contact-hero">
+
   <h2>Let’s Create Something Amazing ✨</h2>
   <p>For orders & bookings, message us on Instagram</p>
 
@@ -38,6 +45,7 @@
      target="_blank">
     📩 Book via Instagram
   </a>
+
 </section>
 
 <!-- ================= CONTACT CARD ================= -->
@@ -49,9 +57,9 @@
 
     <input type="hidden" name="form-name" value="contact">
 
-    <input type="text" name="name" placeholder="Name" required>
+    <input type="text" name="name" placeholder="Your Name" required>
 
-    <input type="email" name="email" placeholder="Email" required>
+    <input type="email" name="email" placeholder="Your Email" required>
 
     <textarea name="message" placeholder="Your message..." required></textarea>
 
@@ -59,7 +67,9 @@
 
   </form>
 
-  <p class="small-text">We usually reply within 24 hours</p>
+  <p class="small-text">
+    We usually reply within 24 hours
+  </p>
 
 </section>
 
