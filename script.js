@@ -14,31 +14,26 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= FILTER STATE ================= */
-let currentCategory = "all";
-let currentSearch = "";
-
-/* ================= AUTH MODAL ================= */
-function openAuth(){
+/* ================= AUTH ================= */
+function openAuth() {
   document.getElementById("authModal").style.display = "flex";
 }
 
-function closeAuth(){
+function closeAuth() {
   document.getElementById("authModal").style.display = "none";
 }
 
-/* ================= SIGN UP ================= */
-function emailSignup(){
+/* ================= SIGN UP / LOGIN FIXED ================= */
+function emailSignup() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created"))
+    .then(() => alert("Account created! Now sign in"))
     .catch(err => alert(err.message));
 }
 
-/* ================= LOGIN ================= */
-function emailLogin(){
+function emailLogin() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
 
@@ -47,8 +42,7 @@ function emailLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= GOOGLE LOGIN ================= */
-function googleLogin(){
+function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
@@ -57,14 +51,13 @@ function googleLogin(){
 }
 
 /* ================= UI UPDATE ================= */
-function updateUI(user){
-
+function updateUI(user) {
   const btn = document.getElementById("authBtn");
   const addBtn = document.getElementById("addBtn");
 
   if (!btn) return;
 
-  if (!user){
+  if (!user) {
     btn.innerHTML = "Sign in";
     btn.onclick = openAuth;
     if (addBtn) addBtn.style.display = "none";
@@ -72,39 +65,36 @@ function updateUI(user){
   }
 
   btn.innerHTML = user.photoURL
-    ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
+    ? `<img src="${user.photoURL}" style="width:28px;height:28px;border-radius:50%">`
     : "Profile";
 
-  btn.onclick = null;
+  btn.onclick = closeAuth;
 
-  if (addBtn){
-    addBtn.style.display =
-      admins.includes(user.email) ? "flex" : "none";
+  if (addBtn) {
+    addBtn.style.display = admins.includes(user.email) ? "flex" : "none";
   }
 
   toggleAdminControls(user);
 }
 
-/* ================= AUTH STATE ================= */
 auth.onAuthStateChanged(user => {
   updateUI(user);
 });
 
-/* ================= CLOUDINARY UPLOAD ================= */
-async function uploadImage(){
+/* ================= CLOUDINARY UPLOAD FIXED ================= */
+async function uploadImage() {
 
   const file = document.getElementById("file").files[0];
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
 
-  if (!file) return alert("Select a file");
+  if (!file) return alert("Select a file first");
 
   const form = new FormData();
   form.append("file", file);
-  form.append("dlc75iidz", "Hhggbbhj");
+  form.append("dlc75iidz", "Hhggbbhj"); // MUST be unsigned in Cloudinary
 
   try {
-
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
       { method: "POST", body: form }
@@ -112,33 +102,36 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url){
+    if (!data.secure_url) {
       console.log(data);
       return alert("Upload failed");
     }
 
     await db.collection("gallery").add({
       title: title || "Untitled",
-      category,
+      category: category || "uncategorized",
       imageUrl: data.secure_url,
       createdAt: Date.now()
     });
 
     alert("Uploaded!");
+    document.getElementById("uploadBox").style.display = "none";
 
-  } catch(err){
+  } catch (err) {
     console.error(err);
+    alert("Upload error");
   }
 }
 
 /* ================= LOAD GALLERY ================= */
-function loadGallery(){
-
+function loadGallery() {
   const gallery = document.getElementById("gallery");
+  const loading = document.getElementById("loadingText");
+
   if (!gallery) return;
 
   db.collection("gallery")
-    .orderBy("createdAt","desc")
+    .orderBy("createdAt", "desc")
     .onSnapshot(snap => {
 
       gallery.innerHTML = "";
@@ -154,23 +147,45 @@ function loadGallery(){
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title}</p>
 
-          <div class="admin-controls">
+          <div class="admin-controls" data-id="${id}">
             <button onclick="editImage('${id}', '${d.title}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
         `;
 
         gallery.appendChild(div);
-
-        setTimeout(applyFilters, 50);
       });
 
+      if (loading) loading.style.display = "none";
     });
 }
 
-/* ================= EDIT ================= */
-async function editImage(id, oldTitle){
+/* ================= SEARCH ================= */
+function searchItems() {
+  const input = document.getElementById("search");
+  const value = input.value.toLowerCase();
+  const items = document.querySelectorAll(".item");
 
+  items.forEach(item => {
+    const text = item.innerText.toLowerCase();
+    item.style.display = text.includes(value) ? "block" : "none";
+  });
+}
+
+/* ================= CATEGORY FILTER ================= */
+function filter(category) {
+  const items = document.querySelectorAll(".item");
+
+  items.forEach(item => {
+    item.style.display =
+      category === "all" || item.classList.contains(category)
+        ? "block"
+        : "none";
+  });
+}
+
+/* ================= EDIT ================= */
+async function editImage(id, oldTitle) {
   const newTitle = prompt("Edit title:", oldTitle);
   if (!newTitle) return;
 
@@ -180,58 +195,28 @@ async function editImage(id, oldTitle){
 }
 
 /* ================= DELETE ================= */
-async function deleteImage(id){
-
-  if (!confirm("Delete?")) return;
+async function deleteImage(id) {
+  if (!confirm("Delete this image?")) return;
 
   await db.collection("gallery").doc(id).delete();
 }
 
-/* ================= MODAL ================= */
-function openModal(img){
-  document.getElementById("modal").style.display = "flex";
-  document.getElementById("modalImg").src = img.src;
-}
-
-function closeModal(){
-  document.getElementById("modal").style.display = "none";
-}
-
 /* ================= ADMIN CONTROLS ================= */
-function toggleAdminControls(user){
-
+function toggleAdminControls(user) {
   document.querySelectorAll(".admin-controls").forEach(el => {
     el.style.display =
       user && admins.includes(user.email) ? "flex" : "none";
   });
 }
 
-/* ================= FILTER SYSTEM ================= */
-function setCategory(cat){
-  currentCategory = cat;
-  applyFilters();
+/* ================= MODAL ================= */
+function openModal(img) {
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modalImg").src = img.src;
 }
 
-function setSearch(value){
-  currentSearch = value.toLowerCase();
-  applyFilters();
-}
-
-function applyFilters(){
-
-  document.querySelectorAll(".item").forEach(item => {
-
-    const text = item.innerText.toLowerCase();
-
-    const matchSearch = text.includes(currentSearch);
-
-    const matchCategory =
-      currentCategory === "all" ||
-      item.classList.contains(currentCategory);
-
-    item.style.display =
-      matchSearch && matchCategory ? "block" : "none";
-  });
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
 }
 
 /* ================= INIT ================= */
@@ -240,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
 
-  if (btn && box){
+  if (btn && box) {
     btn.onclick = () => {
       box.style.display =
         box.style.display === "block" ? "none" : "block";
