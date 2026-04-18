@@ -1,3 +1,4 @@
+
 /* =========================
 🔥 FIREBASE CONFIG
 ========================= */
@@ -12,39 +13,52 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ================= CLOUDINARY ================= */
-const CLOUD_NAME = "dlc75iidz";
-const UPLOAD_PRESET = "ml_default";
-
 /* ================= ADMINS ================= */
 const admins = ["your@email.com"];
 
-/* ================= AUTH ================= */
-function openAuth() {
-  authModal.style.display = "flex";
+/* ================= MODAL FIX ================= */
+function openAuth(){
+  document.getElementById("authModal").style.display = "flex";
 }
 
-function closeAuth() {
-  authModal.style.display = "none";
+function closeAuth(){
+  document.getElementById("authModal").style.display = "none";
 }
 
-function googleLogin() {
+/* ================= FORCE SIGN UP FIRST FLOW ================= */
+function emailSignup(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => {
+      alert("Account created! Now sign in.");
+    })
+    .catch(err => alert(err.message));
+}
+
+function emailLogin(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => closeAuth())
+    .catch(err => alert(err.message));
+}
+
+/* ================= GOOGLE FIX (POPUP NOT REDIRECT) ================= */
+function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).then(closeAuth);
+
+  auth.signInWithPopup(provider)
+    .then(() => closeAuth())
+    .catch(err => alert(err.message));
 }
 
-function emailLogin() {
-  auth.signInWithEmailAndPassword(email.value, password.value)
-    .then(closeAuth);
-}
-
-function emailSignup() {
-  auth.createUserWithEmailAndPassword(email.value, password.value);
-}
-
-/* ================= ADMIN CHECK ================= */
+/* ================= ADMIN BUTTON ================= */
 auth.onAuthStateChanged(user => {
   const btn = document.getElementById("addBtn");
+
   if (!btn) return;
 
   if (user && admins.includes(user.email)) {
@@ -55,18 +69,18 @@ auth.onAuthStateChanged(user => {
 });
 
 /* ================= UPLOAD ================= */
-async function uploadImage() {
+async function uploadImage(){
   const file = document.getElementById("file").files[0];
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
 
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", UPLOAD_PRESET);
+  form.append("ml_default", "dlc75iidz");
 
   const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-    { method: "POST", body: form }
+    "https://api.cloudinary.com/v1_1/YOUR_CLOUD/image/upload",
+    { method:"POST", body:form }
   );
 
   const data = await res.json();
@@ -82,12 +96,13 @@ async function uploadImage() {
 }
 
 /* ================= LOAD GALLERY ================= */
-function loadGallery() {
+function loadGallery(){
   const gallery = document.getElementById("gallery");
+
   if (!gallery) return;
 
   db.collection("gallery")
-    .orderBy("createdAt", "desc")
+    .orderBy("createdAt","desc")
     .onSnapshot(snap => {
 
       gallery.innerHTML = "";
@@ -105,25 +120,18 @@ function loadGallery() {
 
         gallery.appendChild(div);
       });
+
     });
 }
 
 document.addEventListener("DOMContentLoaded", loadGallery);
 
 /* ================= MODAL ================= */
-function openModal(img) {
-  modal.style.display = "flex";
-  modalImg.src = img.src;
+function openModal(img){
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modalImg").src = img.src;
 }
 
-function closeModal() {
-  modal.style.display = "none";
-}
-
-/* ================= UPLOAD TOGGLE ================= */
-if (document.getElementById("addBtn")) {
-  addBtn.onclick = () => {
-    uploadBox.style.display =
-      uploadBox.style.display === "block" ? "none" : "block";
-  };
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
 }
