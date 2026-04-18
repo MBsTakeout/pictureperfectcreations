@@ -1,72 +1,62 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-<meta charset="UTF-8" />
- 
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Picture Perfect Creations</title>
 
-<link rel="icon" type="image/png" href="images/favicon.png">
-<link rel="apple-touch-icon" href="images/favicon.png">
-<link rel="shortcut icon" href="images/favicon.png">
+<link rel="stylesheet" href="styles.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
 
-<div id="cookieBanner" class="cookie">
-  <p>We use cookies to improve your experience ✨</p>
-  <button onclick="acceptCookies()">Accept</button>
-  <button onclick="rejectCookies()">Reject</button>
+<h1>Picture Perfect Creations</h1>
+
+<!-- LOGIN -->
+<div class="login">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <button onclick="logout()">Logout</button>
 </div>
 
-<header>
-  <h1>Picture Perfect Creations</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="gallery.html">Gallery</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-  <button onclick="toggleDarkMode()" class="dark-btn">🌙</button>
-</header>
+<!-- ADMIN BUTTON -->
+<div id="addBtn" style="display:none; font-size:40px; cursor:pointer;">➕</div>
 
-<section class="hero">
-  <div class="hero-card">
-    <h2>✨ Luxury Custom Creations</h2>
-    <p>Vinyl • Bobo Balloons • Boards • Stickers • Wedding Cards</p>
-    <a href="gallery.html" class="btn">Explore Gallery</a>
-  </div>
-</section>
+<!-- UPLOAD PANEL -->
+<div id="uploadBox" style="display:none;">
+  <input type="text" id="title" placeholder="Title">
 
-<section class="grid-info">
-  <div class="info-card">🎨 Custom Designs</div>
-  <div class="info-card">🎈 Event Decor</div>
-  <div class="info-card">💌 Wedding Stationery</div>
-  <div class="info-card">✨ Premium Quality</div>
-</section>
+  <select id="category">
+    <option>Vinyl</option>
+    <option>Bobo Balloons</option>
+    <option>Boards</option>
+    <option>Stickers</option>
+    <option>Wedding Cards</option>
+  </select>
 
-<section class="about">
-  <h2>About Us</h2>
-  <p>We create high-end personalised designs for events, weddings and celebrations. Every product is crafted with detail and passion.</p>
-</section>
+  <input type="file" id="file">
 
-<section class="cta">
-  <h2>Ready to create something amazing?</h2>
-  <a href="contact.html" class="btn">Contact Us</a>
-</section>
+  <button onclick="uploadImage()">Upload</button>
+</div>
 
-<footer>© 2026 Picture Perfect Creations</footer>
+<!-- GALLERY -->
+<div id="gallery"></div>
 
 <script src="script.js"></script>
-  <script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("login", () => {
-      document.location.href = "/admin/";
-    });
-  }
+
+<script>
+document.getElementById("addBtn").onclick = () => {
+  const box = document.getElementById("uploadBox");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+};
 </script>
+
 </body>
 </html>
-
