@@ -191,5 +191,30 @@ width:100%;
 display:block;
 }
 
+.admin-controls{
+  display:none;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px;
+}
+
+.admin-controls button{
+  padding:5px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.admin-controls button:first-child{
+  background:#333;
+  color:white;
+}
+
+.admin-controls button:last-child{
+  background:#e74c3c;
+  color:white;
+}
+
 /* ================= CLEAN UP ================= */
 /* removed duplicates + fixed layering issues */
