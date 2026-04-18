@@ -1,3 +1,6 @@
+/* =========================
+🔥 FIREBASE CONFIG
+========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
   authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
@@ -11,6 +14,10 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
+/* ================= FILTER STATE ================= */
+let currentCategory = "all";
+let currentSearch = "";
+
 /* ================= AUTH MODAL ================= */
 function openAuth(){
   document.getElementById("authModal").style.display = "flex";
@@ -20,16 +27,17 @@ function closeAuth(){
   document.getElementById("authModal").style.display = "none";
 }
 
-/* ================= SIGN UP / LOGIN ================= */
+/* ================= SIGN UP ================= */
 function emailSignup(){
-  const email = email.value;
-  const pass = password.value;
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
   auth.createUserWithEmailAndPassword(email, pass)
     .then(() => alert("Account created"))
     .catch(err => alert(err.message));
 }
 
+/* ================= LOGIN ================= */
 function emailLogin(){
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -39,6 +47,7 @@ function emailLogin(){
     .catch(err => alert(err.message));
 }
 
+/* ================= GOOGLE LOGIN ================= */
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -76,7 +85,7 @@ function updateUI(user){
   toggleAdminControls(user);
 }
 
-/* ================= AUTH STATE (ONLY ONE) ================= */
+/* ================= AUTH STATE ================= */
 auth.onAuthStateChanged(user => {
   updateUI(user);
 });
@@ -92,7 +101,7 @@ async function uploadImage(){
 
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "Hhggbbhj"); // FIX THIS IF NEEDED
+  form.append("dlc75iidz", "Hhggbbhj");
 
   try {
 
@@ -144,13 +153,16 @@ function loadGallery(){
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title}</p>
-          <div class="admin-controls" data-id="${id}">
+
+          <div class="admin-controls">
             <button onclick="editImage('${id}', '${d.title}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
         `;
 
         gallery.appendChild(div);
+
+        setTimeout(applyFilters, 50);
       });
 
     });
@@ -194,18 +206,46 @@ function toggleAdminControls(user){
   });
 }
 
-/* ================= TOGGLE UPLOAD BOX ================= */
+/* ================= FILTER SYSTEM ================= */
+function setCategory(cat){
+  currentCategory = cat;
+  applyFilters();
+}
+
+function setSearch(value){
+  currentSearch = value.toLowerCase();
+  applyFilters();
+}
+
+function applyFilters(){
+
+  document.querySelectorAll(".item").forEach(item => {
+
+    const text = item.innerText.toLowerCase();
+
+    const matchSearch = text.includes(currentSearch);
+
+    const matchCategory =
+      currentCategory === "all" ||
+      item.classList.contains(currentCategory);
+
+    item.style.display =
+      matchSearch && matchCategory ? "block" : "none";
+  });
+}
+
+/* ================= INIT ================= */
 document.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
 
-  if (!btn || !box) return;
-
-  btn.onclick = () => {
-    box.style.display =
-      box.style.display === "block" ? "none" : "block";
-  };
+  if (btn && box){
+    btn.onclick = () => {
+      box.style.display =
+        box.style.display === "block" ? "none" : "block";
+    };
+  }
 
   loadGallery();
 });
