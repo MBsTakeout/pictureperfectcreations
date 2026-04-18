@@ -17,9 +17,7 @@
 </head>
 
 <body>
-<section class="gallery-page">
-  <section class="gallery" id="gallery"></section>
-</section>
+
 <!-- ================= HEADER ================= -->
 <header class="main-header">
   <h1 class="logo">Picture Perfect</h1>
@@ -35,20 +33,32 @@
   </button>
 </header>
 
-<!-- ================= SEARCH ================= -->
-<div style="text-align:center; margin-top:15px;">
-  <input id="searchInput" placeholder="Search creations..." style="padding:10px; width:80%; max-width:400px; border-radius:10px; border:1px solid #ddd;">
-</div>
+<!-- ================= PAGE WRAPPER ================= -->
+<section class="gallery-page">
 
-<!-- ================= FILTERS ================= -->
-<div class="filters" style="text-align:center; margin-top:10px;">
-  <button onclick="filterCategory('all')">All</button>
-  <button onclick="filterCategory('vinyl')">Vinyl</button>
-  <button onclick="filterCategory('balloon')">Balloon</button>
-  <button onclick="filterCategory('boards')">Boards</button>
-  <button onclick="filterCategory('stickers')">Stickers</button>
-  <button onclick="filterCategory('weddings')">Wedding</button>
-</div>
+  <!-- SEARCH -->
+  <div style="text-align:center; margin-top:15px;">
+    <input id="searchInput" placeholder="Search creations..."
+    style="padding:10px; width:80%; max-width:400px; border-radius:10px; border:1px solid #ddd;">
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters" style="text-align:center; margin-top:10px;">
+    <button onclick="filterCategory('all')">All</button>
+    <button onclick="filterCategory('vinyl')">Vinyl</button>
+    <button onclick="filterCategory('balloon')">Balloon</button>
+    <button onclick="filterCategory('boards')">Boards</button>
+    <button onclick="filterCategory('stickers')">Stickers</button>
+    <button onclick="filterCategory('weddings')">Wedding</button>
+  </div>
+
+  <!-- LOADING -->
+  <p id="loadingText" style="text-align:center;">Loading gallery...</p>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery"></section>
+
+</section>
 
 <!-- ================= ADMIN UPLOAD ================= -->
 <div id="addBtn" class="add-btn">+</div>
@@ -71,18 +81,12 @@
 
 </div>
 
-<!-- ================= LOADING ================= -->
-<p id="loadingText" style="text-align:center;">Loading gallery...</p>
-
-<!-- ================= GALLERY ================= -->
-<section class="gallery" id="gallery"></section>
-
-<!-- ================= MODAL ================= -->
+<!-- MODAL -->
 <div id="modal" class="modal" onclick="closeModal()">
   <img id="modalImg">
 </div>
 
-<!-- ================= AUTH MODAL (REQUIRED FOR YOUR SCRIPT) ================= -->
+<!-- AUTH MODAL -->
 <div id="authModal" class="modal">
   <div class="modal-box">
 
