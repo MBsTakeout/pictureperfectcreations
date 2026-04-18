@@ -1,18 +1,14 @@
-/* =========================
-🔥 FIREBASE CONFIG
-========================= */ 
 const firebaseConfig = {
   apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
   authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
   projectId: "pictureperfectcreations-5c37e"
 };
 
-firebase.initializeApp(firebaseConfig); 
+firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ================= ADMINS ================= */
 const admins = ["bm015059@gmail.com"];
 
 /* ================= AUTH MODAL ================= */
@@ -24,17 +20,16 @@ function closeAuth(){
   document.getElementById("authModal").style.display = "none";
 }
 
-/* ================= SIGN UP ================= */
+/* ================= SIGN UP / LOGIN ================= */
 function emailSignup(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+  const email = email.value;
+  const pass = password.value;
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created! Now sign in."))
+    .then(() => alert("Account created"))
     .catch(err => alert(err.message));
 }
 
-/* ================= LOGIN ================= */
 function emailLogin(){
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -44,7 +39,6 @@ function emailLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= GOOGLE LOGIN ================= */
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -53,56 +47,52 @@ function googleLogin(){
     .catch(err => alert(err.message));
 }
 
-/* ================= PROFILE UI ================= */
-function updateAuthUI(user) {
+/* ================= UI UPDATE ================= */
+function updateUI(user){
+
   const btn = document.getElementById("authBtn");
+  const addBtn = document.getElementById("addBtn");
+
   if (!btn) return;
 
-  if (!user) {
+  if (!user){
     btn.innerHTML = "Sign in";
     btn.onclick = openAuth;
+    if (addBtn) addBtn.style.display = "none";
     return;
   }
 
-  if (user.photoURL) {
-    btn.innerHTML = `
-      <img src="${user.photoURL}" 
-      style="width:25px;height:25px;border-radius:50%;vertical-align:middle;">
-    `;
-  } else {
-    btn.innerHTML = "Profile";
-  }
+  btn.innerHTML = user.photoURL
+    ? `<img src="${user.photoURL}" style="width:25px;height:25px;border-radius:50%">`
+    : "Profile";
 
   btn.onclick = null;
+
+  if (addBtn){
+    addBtn.style.display =
+      admins.includes(user.email) ? "flex" : "none";
+  }
+
+  toggleAdminControls(user);
 }
 
-/* ================= AUTH STATE (FIXED - ONLY ONE) ================= */
+/* ================= AUTH STATE (ONLY ONE) ================= */
 auth.onAuthStateChanged(user => {
-
-  updateAuthUI(user);
-
-  const addBtn = document.getElementById("addBtn");
-
-  if (!addBtn) return;
-
-  if (user && admins.includes(user.email)) {
-    addBtn.style.display = "flex";
-  } else {
-    addBtn.style.display = "none";
-  }
+  updateUI(user);
 });
 
+/* ================= CLOUDINARY UPLOAD ================= */
 async function uploadImage(){
 
   const file = document.getElementById("file").files[0];
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
 
-  if (!file) return alert("Select a file first");
+  if (!file) return alert("Select a file");
 
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "Hhggbbhj");
+  form.append("upload_preset", "Hhggbbhj"); // FIX THIS IF NEEDED
 
   try {
 
@@ -113,11 +103,9 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    console.log("Cloudinary response:", data);
-
-    if (!data.secure_url) {
-      alert("Upload failed (Cloudinary rejected file)");
-      return;
+    if (!data.secure_url){
+      console.log(data);
+      return alert("Upload failed");
     }
 
     await db.collection("gallery").add({
@@ -127,11 +115,10 @@ async function uploadImage(){
       createdAt: Date.now()
     });
 
-    alert("Uploaded successfully!");
+    alert("Uploaded!");
 
-  } catch (err) {
+  } catch(err){
     console.error(err);
-    alert("Upload error occurred");
   }
 }
 
@@ -143,12 +130,13 @@ function loadGallery(){
 
   db.collection("gallery")
     .orderBy("createdAt","desc")
-    .onSnapshot(snapshot => {
+    .onSnapshot(snap => {
 
       gallery.innerHTML = "";
 
-      snapshot.forEach(doc => {
+      snap.forEach(doc => {
         const d = doc.data();
+        const id = doc.id;
 
         const div = document.createElement("div");
         div.className = `item ${d.category}`;
@@ -156,6 +144,10 @@ function loadGallery(){
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title}</p>
+          <div class="admin-controls" data-id="${id}">
+            <button onclick="editImage('${id}', '${d.title}')">Edit</button>
+            <button onclick="deleteImage('${id}')">Delete</button>
+          </div>
         `;
 
         gallery.appendChild(div);
@@ -164,7 +156,24 @@ function loadGallery(){
     });
 }
 
-document.addEventListener("DOMContentLoaded", loadGallery);
+/* ================= EDIT ================= */
+async function editImage(id, oldTitle){
+
+  const newTitle = prompt("Edit title:", oldTitle);
+  if (!newTitle) return;
+
+  await db.collection("gallery").doc(id).update({
+    title: newTitle
+  });
+}
+
+/* ================= DELETE ================= */
+async function deleteImage(id){
+
+  if (!confirm("Delete?")) return;
+
+  await db.collection("gallery").doc(id).delete();
+}
 
 /* ================= MODAL ================= */
 function openModal(img){
@@ -176,7 +185,16 @@ function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
 
-/* ================= + BUTTON TOGGLE ================= */
+/* ================= ADMIN CONTROLS ================= */
+function toggleAdminControls(user){
+
+  document.querySelectorAll(".admin-controls").forEach(el => {
+    el.style.display =
+      user && admins.includes(user.email) ? "flex" : "none";
+  });
+}
+
+/* ================= TOGGLE UPLOAD BOX ================= */
 document.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("addBtn");
@@ -189,4 +207,5 @@ document.addEventListener("DOMContentLoaded", () => {
       box.style.display === "block" ? "none" : "block";
   };
 
+  loadGallery();
 });
