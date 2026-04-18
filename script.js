@@ -243,7 +243,24 @@ function setupSearch(){
 
   });
 }
+/* ================= CATEGORY FILTER ================= */
 
+function filterCategory(category){
+
+  const items = document.querySelectorAll(".item");
+
+  items.forEach(item => {
+
+    if (category === "all"){
+      item.style.display = "block";
+      return;
+    }
+
+    const match = item.classList.contains(category);
+
+    item.style.display = match ? "block" : "none";
+  });
+}
 /* ================= TOGGLE UPLOAD BOX ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
