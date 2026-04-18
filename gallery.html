@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gallery</title>
+
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/favicon.png">
+<link rel="shortcut icon" href="images/favicon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+  <h1>Gallery</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <button onclick="toggleDarkMode()" class="dark-btn">🌙</button>
+</header>
+
+<input type="text" id="search" placeholder="Search creations..." onkeyup="searchItems()" />
+
+<div class="filters">
+  <button onclick="filter('all')">All</button>
+  <button onclick="filter('vinyl')">Vinyl</button>
+  <button onclick="filter('balloon')">Balloons</button>
+  <button onclick="filter('boards')">Boards</button>
+  <button onclick="filter('stickers')">Stickers</button>
+  <button onclick="filter('weddings')">Wedding</button>
+</div>
+
+<section class="gallery">
+
+  <div class="item vinyl" onclick="openModal(this)">
+    <img src="images/vinyl1.jpg" />
+    <p>Luxury Vinyl Design</p>
+  </div>
+
+  <div class="item vinyl" onclick="openModal(this)">
+    <img src="images/vinyl2.jpg" />
+    <p>Luxury Vinyl Design</p>
+  </div>
+
+    <div class="item vinyl" onclick="openModal(this)">
+    <img src="images/vinyl3.jpg" />
+    <p>Luxury Vinyl Design</p>
+  </div>
+
+    <div class="item stickers" onclick="openModal(this)">
+    <img src="images/stickers2.jpg" />
+    <p>Renewal Stickers </p>
+  </div>
+
+    <div class="item balloon" onclick="openModal(this)">
+    <img src="images/balloons2.jpg" />
+    <p>Umrah Mubarak Balloon - Baby Girl</p>
+  </div>
+
+      <div class="item stickers" onclick="openModal(this)">
+    <img src="images/stickers3.jpg" />
+    <p>Cans Stickers </p>
+  </div>
+
+        <div class="item weddings" onclick="openModal(this)">
+    <img src="images/cards3.jpg" />
+    <p>Wedding Invitation Cards</p>
+  </div>
+  
+        <div class="item weddings" onclick="openModal(this)">
+    <img src="images/cards2.jpg" />
+    <p>Mehndi Cards</p>
+  </div>
+
+   <div class="item stickers" onclick="openModal(this)">
+    <img src="images/stickers1.jpg" />
+    <p>The Matilda</p>
+  </div>
+
+  <div class="item balloon" onclick="openModal(this)">
+    <img src="images/balloon1.jpg" />
+    <p>Bobo Balloon - Baby Girl</p>
+  </div>
+
+  <div class="item balloon" onclick="openModal(this)">
+    <img src="images/balloon3.jpg" />
+    <p>Bobo Balloon - Baby Girl</p>
+  </div>
+
+    <div class="item boards" onclick="openModal(this)">
+    <img src="images/cards1.jpg" />
+    <p>Eid Boards</p>
+  </div>
+
+
+
+
+</section>
+
+<div id="modal" class="modal" onclick="closeModal()">
+  <img id="modalImg" />
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
