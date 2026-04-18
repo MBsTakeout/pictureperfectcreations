@@ -28,23 +28,26 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <button id="authBtn" onclick="openAuth()" class="login-btn">Sign in</button>
+  <!-- LOGIN / PROFILE BUTTON -->
+  <button id="authBtn" class="login-btn" onclick="openAuth()">Sign in</button>
 </header>
 
 <!-- ================= SEARCH ================= -->
-<input id="searchInput" placeholder="Search creations..." class="search-bar">
+<div style="text-align:center; margin-top:15px;">
+  <input id="searchInput" placeholder="Search creations..." style="padding:10px; width:80%; max-width:400px; border-radius:10px; border:1px solid #ddd;">
+</div>
 
 <!-- ================= FILTERS ================= -->
-<div class="filters">
+<div class="filters" style="text-align:center; margin-top:10px;">
   <button onclick="filterCategory('all')">All</button>
   <button onclick="filterCategory('vinyl')">Vinyl</button>
-  <button onclick="filterCategory('balloon')">Balloons</button>
+  <button onclick="filterCategory('balloon')">Balloon</button>
   <button onclick="filterCategory('boards')">Boards</button>
   <button onclick="filterCategory('stickers')">Stickers</button>
   <button onclick="filterCategory('weddings')">Wedding</button>
 </div>
 
-<!-- ================= ADMIN + BUTTON ================= -->
+<!-- ================= ADMIN UPLOAD ================= -->
 <div id="addBtn" class="add-btn">+</div>
 
 <div id="uploadBox" class="upload-box">
@@ -65,7 +68,7 @@
 
 </div>
 
-<!-- ================= LOADING TEXT ================= -->
+<!-- ================= LOADING ================= -->
 <p id="loadingText" style="text-align:center;">Loading gallery...</p>
 
 <!-- ================= GALLERY ================= -->
@@ -76,7 +79,7 @@
   <img id="modalImg">
 </div>
 
-<!-- ================= AUTH MODAL ================= -->
+<!-- ================= AUTH MODAL (REQUIRED FOR YOUR SCRIPT) ================= -->
 <div id="authModal" class="modal">
   <div class="modal-box">
 
