@@ -50,8 +50,8 @@ auth.onAuthStateChanged(user => {
 /* =========================
 ☁️ CLOUDINARY SETTINGS
 ========================= */
-const CLOUD_NAME = "YOUR_CLOUD_NAME";
-const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+const CLOUD_NAME = "dlc75iidz";
+const UPLOAD_PRESET = "ml_default";
 
 /* =========================
 📸 UPLOAD IMAGE (FILE → CLOUDINARY)
