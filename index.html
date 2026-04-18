@@ -60,6 +60,13 @@
 <footer>© 2026 Picture Perfect Creations</footer>
 
 <script src="script.js"></script>
+  <script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("login", () => {
+      document.location.href = "/admin/";
+    });
+  }
+</script>
 </body>
 </html>
 
