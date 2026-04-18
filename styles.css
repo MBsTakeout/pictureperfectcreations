@@ -1,4 +1,7 @@
-/* ================= GLOBAL ================= */
+/* =========================
+GLOBAL DESIGN SYSTEM
+========================= */
+
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
@@ -6,44 +9,67 @@ background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
-/* ================= HEADER ================= */
+/* ================= HEADER (UNIFIED) ================= */
+
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px 20px;
-background:rgba(255,255,255,0.85);
-backdrop-filter:blur(10px);
+padding:15px 25px;
+background:rgba(255,255,255,0.75);
+backdrop-filter:blur(12px);
 position:sticky;
 top:0;
-z-index:1000;
+z-index:100;
+border-bottom:1px solid rgba(0,0,0,0.05);
+}
+
+header h1{
+font-size:20px;
+margin:0;
 }
 
 nav a{
-margin:10px;
+margin:0 10px;
 text-decoration:none;
 color:#111;
 font-weight:500;
+transition:0.3s;
 }
 
-/* ================= LOGIN BUTTON ================= */
+nav a:hover{
+opacity:0.6;
+}
+
+/* ================= BUTTON SYSTEM ================= */
+
+button, .btn{
+padding:10px 18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+transition:0.3s;
+}
+
+button:hover, .btn:hover{
+transform:scale(1.03);
+}
+
 .login-btn{
 background:black;
 color:white;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-cursor:pointer;
 }
 
-/* ================= HERO ================= */
-.hero{
+/* ================= HERO (ALL PAGES) ================= */
+
+.hero, .contact-hero{
 height:70vh;
 display:flex;
 align-items:center;
 justify-content:center;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 text-align:center;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 }
 
 .hero-card{
@@ -53,17 +79,72 @@ border-radius:20px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-.btn{
-padding:12px 25px;
-background:black;
-color:white;
+/* ================= GRID INFO ================= */
+
+.grid-info{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+padding:30px;
+}
+
+.info-card{
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* ================= GALLERY ================= */
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+padding:20px;
+}
+
+.item{
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
+transition:0.3s;
+}
+
+.item:hover{
+transform:scale(1.03);
+}
+
+.item img{
+width:100%;
+display:block;
+}
+
+/* ================= CONTACT CARD ================= */
+
+.contact-card{
+max-width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+input, textarea{
+width:100%;
+padding:12px;
+margin:10px 0;
 border-radius:10px;
-text-decoration:none;
-display:inline-block;
-margin-top:10px;
+border:1px solid #ddd;
+font-family:'Poppins',sans-serif;
 }
 
 /* ================= MODAL ================= */
+
 .modal{
 display:none;
 position:fixed;
@@ -74,73 +155,28 @@ height:100%;
 background:rgba(0,0,0,0.7);
 align-items:center;
 justify-content:center;
-z-index:9999;
+z-index:999;
 }
 
-.modal-box{
-background:white;
-padding:25px;
-border-radius:15px;
-width:300px;
+.modal img{
+max-width:85%;
+border-radius:10px;
+}
+
+/* ================= COOKIE ================= */
+
+.cookie{
+position:fixed;
+bottom:0;
+width:100%;
+background:black;
+color:white;
+padding:10px;
 text-align:center;
 }
 
-.modal-box input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:8px;
-border:1px solid #ddd;
-}
+/* ================= ADD BUTTON ================= */
 
-.modal-box button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.google-btn{
-background:#db4437;
-color:white;
-}
-
-/* ================= PROFILE DROPDOWN ================= */
-.profile-wrapper{
-position:relative;
-display:flex;
-align-items:center;
-}
-
-.profile-menu{
-display:none;
-position:absolute;
-top:45px;
-right:0;
-background:white;
-box-shadow:0 10px 20px rgba(0,0,0,0.15);
-border-radius:10px;
-overflow:hidden;
-min-width:120px;
-z-index:1000;
-}
-
-.profile-menu button{
-width:100%;
-padding:10px;
-border:none;
-background:white;
-cursor:pointer;
-text-align:left;
-}
-
-.profile-menu button:hover{
-background:#f2f2f2;
-}
-
-/* ================= ADMIN BUTTON ================= */
 .add-btn{
 position:fixed;
 bottom:20px;
@@ -154,11 +190,11 @@ font-size:30px;
 display:none;
 align-items:center;
 justify-content:center;
-cursor:pointer;
 z-index:999;
 }
 
 /* ================= UPLOAD BOX ================= */
+
 .upload-box{
 display:none;
 position:fixed;
@@ -166,108 +202,42 @@ bottom:90px;
 right:20px;
 background:white;
 padding:15px;
-border-radius:10px;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
 z-index:999;
 }
 
-/* ================= GALLERY ================= */
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-padding:20px;
-}
-
-.item{
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-.item img{
-width:100%;
-display:block;
-}
-
-.admin-controls{
-  display:none;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px;
-}
-
-.admin-controls button{
-  padding:5px 10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:12px;
-}
-
-.admin-controls button:first-child{
-  background:#333;
-  color:white;
-}
-
-.admin-controls button:last-child{
-  background:#e74c3c;
-  color:white;
-}
-
-.contact-hero{
-  text-align:center;
-  padding:80px 20px;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-}
-
-.contact-card{
-  max-width:500px;
-  margin:40px auto;
-  background:white;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  text-align:center;
-}
-
-.contact-card input,
-.contact-card textarea{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:1px solid #ddd;
-  font-family:'Poppins',sans-serif;
-}
-
-.contact-card button{
-  width:100%;
-  padding:12px;
-  border:none;
-  background:black;
-  color:white;
-  border-radius:10px;
-  cursor:pointer;
-}
+/* ================= INSTAGRAM BUTTON ================= */
 
 .insta-btn{
-  display:inline-block;
-  margin-top:15px;
-  padding:12px 20px;
-  background:#E1306C;
-  color:white;
-  text-decoration:none;
-  border-radius:12px;
-  font-weight:600;
+display:inline-block;
+margin-top:15px;
+padding:12px 20px;
+background:#E1306C;
+color:white;
+text-decoration:none;
+border-radius:12px;
+font-weight:600;
 }
+
+/* ================= SMALL TEXT ================= */
 
 .small-text{
-  font-size:12px;
-  opacity:0.7;
-  margin-top:10px;
+font-size:12px;
+opacity:0.7;
+margin-top:10px;
 }
 
-/* ================= CLEAN UP ================= */
-/* removed duplicates + fixed layering issues */
+/* ================= DARK MODE ================= */
+
+.dark-mode{
+background:#111;
+color:white;
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
