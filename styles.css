@@ -1,7 +1,3 @@
-/* =========================
-GLOBAL DESIGN SYSTEM
-========================= */
-
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
@@ -9,9 +5,8 @@ background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
-/* ================= HEADER (UNIFIED) ================= */
-
-header{
+/* HEADER */
+.main-header{
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -21,83 +16,42 @@ backdrop-filter:blur(12px);
 position:sticky;
 top:0;
 z-index:100;
-border-bottom:1px solid rgba(0,0,0,0.05);
 }
 
-header h1{
-font-size:20px;
-margin:0;
-}
-
-nav a{
+.nav-links a{
 margin:0 10px;
 text-decoration:none;
 color:#111;
 font-weight:500;
-transition:0.3s;
 }
 
-nav a:hover{
-opacity:0.6;
-}
-
-/* ================= BUTTON SYSTEM ================= */
-
-button, .btn{
-padding:10px 18px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-font-family:'Poppins',sans-serif;
-transition:0.3s;
-}
-
-button:hover, .btn:hover{
-transform:scale(1.03);
-}
-
+/* BUTTONS */
 .login-btn{
 background:black;
 color:white;
+padding:8px 14px;
+border-radius:8px;
+border:none;
+cursor:pointer;
 }
 
-/* ================= HERO (ALL PAGES) ================= */
-
-.hero, .contact-hero{
+/* HERO */
+.hero{
 height:70vh;
 display:flex;
 align-items:center;
 justify-content:center;
-text-align:center;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+text-align:center;
 }
 
 .hero-card{
 background:white;
 padding:40px;
 border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-/* ================= GRID INFO ================= */
-
-.grid-info{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-padding:30px;
-}
-
-.info-card{
-background:white;
-padding:20px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-}
-
-/* ================= GALLERY ================= */
-
+/* GALLERY */
 .gallery{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -109,74 +63,25 @@ padding:20px;
 background:white;
 border-radius:15px;
 overflow:hidden;
-box-shadow:0 10px 20px rgba(0,0,0,0.05);
-transition:0.3s;
-}
-
-.item:hover{
-transform:scale(1.03);
 }
 
 .item img{
 width:100%;
-display:block;
 }
 
-/* ================= CONTACT CARD ================= */
-
-.contact-card{
-max-width:500px;
-margin:40px auto;
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-text-align:center;
-}
-
-input, textarea{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid #ddd;
-font-family:'Poppins',sans-serif;
-}
-
-/* ================= MODAL ================= */
-
+/* MODAL */
 .modal{
 display:none;
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+top:0;left:0;
+width:100%;height:100%;
 background:rgba(0,0,0,0.7);
 align-items:center;
 justify-content:center;
 z-index:999;
 }
 
-.modal img{
-max-width:85%;
-border-radius:10px;
-}
-
-/* ================= COOKIE ================= */
-
-.cookie{
-position:fixed;
-bottom:0;
-width:100%;
-background:black;
-color:white;
-padding:10px;
-text-align:center;
-}
-
-/* ================= ADD BUTTON ================= */
-
+/* ADD BUTTON */
 .add-btn{
 position:fixed;
 bottom:20px;
@@ -190,11 +95,11 @@ font-size:30px;
 display:none;
 align-items:center;
 justify-content:center;
+cursor:pointer;
 z-index:999;
 }
 
-/* ================= UPLOAD BOX ================= */
-
+/* UPLOAD */
 .upload-box{
 display:none;
 position:fixed;
@@ -202,122 +107,22 @@ bottom:90px;
 right:20px;
 background:white;
 padding:15px;
-border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-z-index:999;
+border-radius:10px;
 }
 
-/* ================= INSTAGRAM BUTTON ================= */
-
-.insta-btn{
-display:inline-block;
-margin-top:15px;
-padding:12px 20px;
-background:#E1306C;
-color:white;
-text-decoration:none;
-border-radius:12px;
-font-weight:600;
-}
-
-/* ================= SMALL TEXT ================= */
-
-.small-text{
-font-size:12px;
-opacity:0.7;
-margin-top:10px;
-}
-
-/* ================= DARK MODE ================= */
-
-.dark-mode{
-background:#111;
-color:white;
-}
-
-/* ================= ANIMATION ================= */
-
-@keyframes fade{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
-}
-
-/* ================= MODERN HEADER ================= */
-
-.main-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 25px;
-background:rgba(255,255,255,0.7);
-backdrop-filter:blur(12px);
-position:sticky;
-top:0;
-z-index:100;
-border-bottom:1px solid rgba(0,0,0,0.05);
-animation:slideDown 0.5s ease;
-}
-
-.logo{
-font-size:20px;
-font-weight:700;
-letter-spacing:0.5px;
-}
-
-/* NAV LINKS */
-.nav-links a{
-margin:0 12px;
-text-decoration:none;
-color:#111;
-font-weight:500;
+/* PROFILE */
+.profile-wrapper{
 position:relative;
-transition:0.3s;
 }
 
-/* HOVER ANIMATION UNDERLINE */
-.nav-links a::after{
-content:"";
+.profile-menu{
 position:absolute;
-left:0;
-bottom:-4px;
-width:0%;
-height:2px;
-background:black;
-transition:0.3s;
+top:40px;
+right:0;
+background:white;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+border-radius:10px;
+width:120px;
 }
 
-.nav-links a:hover::after{
-width:100%;
-}
-
-/* BUTTON HOVER */
-.login-btn{
-background:black;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.login-btn:hover{
-transform:scale(1.05);
-opacity:0.9;
-}
-
-/* ================= PAGE ANIMATION ================= */
-
-body{
-animation:fadePage 0.6s ease;
-}
-
-@keyframes fadePage{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
-}
-
-@keyframes slideDown{
-from{opacity:0; transform:translateY(-10px);}
-to{opacity:1; transform:translateY(0);}
-}
+.hidden{display:none;}
