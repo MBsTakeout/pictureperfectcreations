@@ -17,8 +17,35 @@ const db = firebase.firestore();
 const admins = ["bm015059@gmail.com"];
 
 /* ================= MODAL FIX ================= */
-function openAuth(){
-  document.getElementById("authModal").style.display = "flex";
+function updateAuthUI(user) {
+  const btn = document.getElementById("authBtn");
+  if (!btn) return;
+
+  // NOT LOGGED IN
+  if (!user) {
+    btn.innerHTML = "Sign in";
+    btn.onclick = openAuth;
+    return;
+  }
+
+  // GOOGLE LOGIN
+  if (user.photoURL) {
+    btn.innerHTML = `
+      <img src="${user.photoURL}" 
+      style="width:25px;height:25px;border-radius:50%;vertical-align:middle;">
+      ${user.displayName || "User"}
+    `;
+    btn.onclick = () => auth.signOut();
+    return;
+  }
+
+  // EMAIL LOGIN
+  btn.innerHTML = `
+    <span style="display:inline-block;width:25px;height:25px;border-radius:50%;
+    background:#ccc;vertical-align:middle;"></span>
+    Profile
+  `;
+  btn.onclick = () => auth.signOut();
 }
 
 function closeAuth(){
@@ -57,6 +84,9 @@ function googleLogin(){
 
 /* ================= ADMIN BUTTON ================= */
 auth.onAuthStateChanged(user => {
+
+  updateAuthUI(user);
+
   const btn = document.getElementById("addBtn");
 
   if (!btn) return;
