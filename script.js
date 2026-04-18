@@ -92,7 +92,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-/* ================= UPLOAD IMAGE (FIXED CLOUDINARY) ================= */
 async function uploadImage(){
 
   const file = document.getElementById("file").files[0];
@@ -103,23 +102,37 @@ async function uploadImage(){
 
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "ml_default"); // FIXED
+  form.append("upload_preset", "ml_default");
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/YOUR_CLOUD/image/upload",
-    { method:"POST", body:form }
-  );
+  try {
 
-  const data = await res.json();
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dlc75iidz/image/upload",
+      { method: "POST", body: form }
+    );
 
-  await db.collection("gallery").add({
-    title,
-    category,
-    imageUrl: data.secure_url,
-    createdAt: Date.now()
-  });
+    const data = await res.json();
 
-  alert("Uploaded!");
+    console.log("Cloudinary response:", data);
+
+    if (!data.secure_url) {
+      alert("Upload failed (Cloudinary rejected file)");
+      return;
+    }
+
+    await db.collection("gallery").add({
+      title: title || "Untitled",
+      category,
+      imageUrl: data.secure_url,
+      createdAt: Date.now()
+    });
+
+    alert("Uploaded successfully!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Upload error occurred");
+  }
 }
 
 /* ================= LOAD GALLERY ================= */
