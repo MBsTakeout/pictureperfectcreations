@@ -3,10 +3,57 @@
 <head>
   <meta charset="utf-8">
   <title>Picture Perfect Admin</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+    }
+    #panel {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-<script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+<h2>Admin Login</h2>
+
+<input type="password" id="pass" placeholder="Enter password">
+<br>
+<button onclick="login()">Login</button>
+
+<div id="panel">
+  <h2>Upload New Work</h2>
+
+  <input id="title" placeholder="Title"><br>
+  <input id="category" placeholder="Category"><br>
+  <input id="image" placeholder="Image URL"><br>
+
+  <button onclick="save()">Save</button>
+</div>
+
+<script>
+const PASSWORD = "admin123"; // change later
+
+function login() {
+  const p = document.getElementById("pass").value;
+  if (p === PASSWORD) {
+    document.getElementById("panel").style.display = "block";
+  } else {
+    alert("Wrong password");
+  }
+}
+
+function save() {
+  alert("This is next step: connect GitHub API (I'll help you)");
+}
+</script>
 
 </body>
 </html>
