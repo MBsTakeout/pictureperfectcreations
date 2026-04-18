@@ -1,57 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Picture Perfect Admin</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 50px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 10px;
-    }
-    #panel {
-      display: none;
-    }
-  </style>
+<meta charset="utf-8">
+<title>Picture Perfect Admin</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0f0f0f;
+  color: white;
+  margin: 0;
+}
+
+.login, .dashboard {
+  max-width: 500px;
+  margin: auto;
+  padding: 40px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #ff4d6d;
+  color: white;
+  cursor: pointer;
+}
+
+.card {
+  background: #1c1c1c;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Admin Login</h2>
+<div class="login" id="loginBox">
+  <h2>Admin Login</h2>
+  <input type="password" id="pass" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
 
-<input type="password" id="pass" placeholder="Enter password">
-<br>
-<button onclick="login()">Login</button>
-
-<div id="panel">
+<div class="dashboard" id="dash" style="display:none;">
   <h2>Upload New Work</h2>
 
-  <input id="title" placeholder="Title"><br>
-  <input id="category" placeholder="Category"><br>
-  <input id="image" placeholder="Image URL"><br>
+  <input id="title" placeholder="Title">
 
-  <button onclick="save()">Save</button>
+  <select id="category">
+    <option>Vinyl</option>
+    <option>Bobo Balloons</option>
+    <option>Boards</option>
+    <option>Stickers</option>
+    <option>Wedding Cards</option>
+  </select>
+
+  <input type="file" id="image">
+
+  <button onclick="upload()">Upload</button>
+
+  <h3>Existing Items</h3>
+  <div id="list"></div>
 </div>
 
 <script>
-const PASSWORD = "admin123"; // change later
+const PASSWORD = "admin123";
 
 function login() {
-  const p = document.getElementById("pass").value;
-  if (p === PASSWORD) {
-    document.getElementById("panel").style.display = "block";
+  if (document.getElementById("pass").value === PASSWORD) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("dash").style.display = "block";
+    loadItems();
   } else {
     alert("Wrong password");
   }
 }
 
-function save() {
-  alert("This is next step: connect GitHub API (I'll help you)");
+function upload() {
+  alert("Next step: connect GitHub API to save file + image upload");
+}
+
+function loadItems() {
+  document.getElementById("list").innerHTML =
+    "<div class='card'>Example item (next step will load real GitHub data)</div>";
 }
 </script>
 
