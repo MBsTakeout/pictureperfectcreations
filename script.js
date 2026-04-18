@@ -2,9 +2,9 @@
 🔥 FIREBASE CONFIG
 ========================= */
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
+  apiKey: "AIzaSyBFR4p-kM0vetj9dP8Q5J_ClZSFHa_ZEMM",
+  authDomain: "pictureperfectcreations-5c37e.firebaseapp.com",
+  projectId: "pictureperfectcreations-5c37e"
 };
 
 firebase.initializeApp(firebaseConfig);
