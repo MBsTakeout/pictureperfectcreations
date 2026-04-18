@@ -11,7 +11,7 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= AUTH ================= */
+/* ================= AUTH MODAL ================= */
 
 function openAuth(){
   const modal = document.getElementById("authModal");
@@ -23,25 +23,36 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
+/* ================= SIGN UP ================= */
+
 function emailSignup(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+
+  const email = document.getElementById("email")?.value;
+  const pass = document.getElementById("password")?.value;
+
+  if (!email || !pass) return alert("Fill in all fields");
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created! Now sign in"))
+    .then(() => alert("Account created! Now sign in."))
     .catch(err => alert(err.message));
 }
 
+/* ================= LOGIN ================= */
+
 function emailLogin(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+
+  const email = document.getElementById("email")?.value;
+  const pass = document.getElementById("password")?.value;
 
   auth.signInWithEmailAndPassword(email, pass)
     .then(() => closeAuth())
     .catch(err => alert(err.message));
 }
 
+/* ================= GOOGLE LOGIN ================= */
+
 function googleLogin(){
+
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
@@ -49,11 +60,13 @@ function googleLogin(){
     .catch(err => alert(err.message));
 }
 
+/* ================= LOGOUT ================= */
+
 function logout(){
   auth.signOut();
 }
 
-/* ================= UI ================= */
+/* ================= UI UPDATE ================= */
 
 function updateUI(user){
 
@@ -61,6 +74,7 @@ function updateUI(user){
   const addBtn = document.getElementById("addBtn");
 
   if (btn){
+
     if (!user){
       btn.innerHTML = "Sign in";
       btn.onclick = openAuth;
@@ -79,21 +93,25 @@ function updateUI(user){
   }
 }
 
-auth.onAuthStateChanged(updateUI);
+/* ================= AUTH STATE ================= */
 
-/* ================= UPLOAD ================= */
+auth.onAuthStateChanged(user => {
+  updateUI(user);
+});
+
+/* ================= CLOUDINARY UPLOAD ================= */
 
 async function uploadImage(){
 
-  const file = document.getElementById("file").files[0];
-  const title = document.getElementById("title").value;
-  const category = document.getElementById("category").value;
+  const file = document.getElementById("file")?.files[0];
+  const title = document.getElementById("title")?.value || "Untitled";
+  const category = document.getElementById("category")?.value || "general";
 
   if (!file) return alert("Select a file");
 
   const form = new FormData();
   form.append("file", file);
-  form.append("dlc75iidz", "Hhggbbhj");
+  form.append("upload_preset", "Hhggbbhj");
 
   try {
 
@@ -104,13 +122,13 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url) {
+    if (!data.secure_url){
       console.log(data);
       return alert("Upload failed");
     }
 
     await db.collection("gallery").add({
-      title: title || "Untitled",
+      title,
       category,
       imageUrl: data.secure_url,
       createdAt: Date.now()
@@ -124,7 +142,7 @@ async function uploadImage(){
   }
 }
 
-/* ================= GALLERY ================= */
+/* ================= LOAD GALLERY ================= */
 
 function loadGallery(){
 
@@ -133,12 +151,14 @@ function loadGallery(){
 
   db.collection("gallery")
     .orderBy("createdAt","desc")
-    .onSnapshot(snap => {
+    .onSnapshot(snapshot => {
 
       gallery.innerHTML = "";
 
-      snap.forEach(doc => {
+      snapshot.forEach(doc => {
+
         const d = doc.data();
+        const id = doc.id;
 
         const div = document.createElement("div");
         div.className = `item ${d.category}`;
@@ -146,12 +166,38 @@ function loadGallery(){
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title}</p>
+
+          <div class="admin-controls" data-id="${id}">
+            <button onclick="editImage('${id}', '${d.title}')">Edit</button>
+            <button onclick="deleteImage('${id}')">Delete</button>
+          </div>
         `;
 
         gallery.appendChild(div);
       });
 
     });
+}
+
+/* ================= EDIT ================= */
+
+async function editImage(id, oldTitle){
+
+  const newTitle = prompt("Edit title:", oldTitle);
+  if (!newTitle) return;
+
+  await db.collection("gallery").doc(id).update({
+    title: newTitle
+  });
+}
+
+/* ================= DELETE ================= */
+
+async function deleteImage(id){
+
+  if (!confirm("Delete this image?")) return;
+
+  await db.collection("gallery").doc(id).delete();
 }
 
 /* ================= MODAL ================= */
@@ -172,6 +218,7 @@ function closeModal(){
 /* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
   loadGallery();
 
   const btn = document.getElementById("addBtn");
@@ -183,4 +230,5 @@ document.addEventListener("DOMContentLoaded", () => {
         box.style.display === "block" ? "none" : "block";
     };
   }
+
 });
