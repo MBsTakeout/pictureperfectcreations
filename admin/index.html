@@ -1,32 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Panel</title>
+  <meta charset="UTF-8">
+  <title>Picture Perfect Admin</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f0f0f;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 40px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
+
+    #panel {
+      display: none;
+    }
+
+    h2 {
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<div id="loginBox">
-  <h2>Login</h2>
-  <input type="password" id="pass" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
+<div class="container">
 
-<div id="panel" style="display:none;">
-  <h2>Upload Work</h2>
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="password" id="pass" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+  </div>
 
-  <input id="title" placeholder="Title">
+  <!-- ADMIN PANEL -->
+  <div id="panel">
+    <h2>Upload New Work</h2>
 
-  <select id="category">
-    <option>Vinyl</option>
-    <option>Bobo Balloons</option>
-    <option>Boards</option>
-    <option>Stickers</option>
-    <option>Wedding Cards</option>
-  </select>
+    <input id="title" placeholder="Title">
 
-  <input type="file" id="image">
+    <select id="category">
+      <option>Vinyl</option>
+      <option>Bobo Balloons</option>
+      <option>Boards</option>
+      <option>Stickers</option>
+      <option>Wedding Cards</option>
+    </select>
 
-  <button onclick="upload()">Upload</button>
+    <input type="file" id="image">
+
+    <button onclick="upload()">Upload</button>
+
+    <p id="status"></p>
+  </div>
+
 </div>
 
 <script src="admin.js"></script>
