@@ -14,7 +14,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ================= ADMINS ================= */
-const admins = ["your@email.com"];
+const admins = ["bm015059@gmail.com"];
 
 /* ================= MODAL FIX ================= */
 function openAuth(){
