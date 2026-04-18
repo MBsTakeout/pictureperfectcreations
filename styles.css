@@ -109,6 +109,11 @@ transform:scale(1.05);
 }
 
 /* ================= GALLERY ================= */
+.gallery-page{
+min-height:100vh;
+padding:20px;
+background:linear-gradient(135deg,#fdfbfb,#ebedee);
+}
 
 .gallery{
 display:grid;
