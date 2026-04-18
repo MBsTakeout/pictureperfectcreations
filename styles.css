@@ -216,5 +216,58 @@ display:block;
   color:white;
 }
 
+.contact-hero{
+  text-align:center;
+  padding:80px 20px;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+}
+
+.contact-card{
+  max-width:500px;
+  margin:40px auto;
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+.contact-card input,
+.contact-card textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-family:'Poppins',sans-serif;
+}
+
+.contact-card button{
+  width:100%;
+  padding:12px;
+  border:none;
+  background:black;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.insta-btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:12px 20px;
+  background:#E1306C;
+  color:white;
+  text-decoration:none;
+  border-radius:12px;
+  font-weight:600;
+}
+
+.small-text{
+  font-size:12px;
+  opacity:0.7;
+  margin-top:10px;
+}
+
 /* ================= CLEAN UP ================= */
 /* removed duplicates + fixed layering issues */
