@@ -7,7 +7,7 @@ const firebaseConfig = {
   projectId: "pictureperfectcreations-5c37e"
 };
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig); 
 
 const auth = firebase.auth();
 const db = firebase.firestore();
