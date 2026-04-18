@@ -5,7 +5,8 @@ background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
+
 .main-header{
 display:flex;
 justify-content:space-between;
@@ -23,19 +24,45 @@ margin:0 10px;
 text-decoration:none;
 color:#111;
 font-weight:500;
+transition:0.3s;
 }
 
-/* BUTTONS */
+.nav-links a:hover{
+opacity:0.6;
+}
+
+/* ================= BUTTON SYSTEM (UPGRADED) ================= */
+
+button, .btn{
+padding:10px 18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+transition:0.3s;
+font-weight:500;
+}
+
+/* PRIMARY BUTTON (View Gallery etc.) */
+.btn{
+background:black;
+color:white;
+display:inline-block;
+}
+
+.btn:hover{
+transform:scale(1.05);
+opacity:0.9;
+}
+
+/* LOGIN BUTTON */
 .login-btn{
 background:black;
 color:white;
-padding:8px 14px;
-border-radius:8px;
-border:none;
-cursor:pointer;
 }
 
-/* HERO */
+/* ================= HERO ================= */
+
 .hero{
 height:70vh;
 display:flex;
@@ -49,9 +76,33 @@ text-align:center;
 background:white;
 padding:40px;
 border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-/* GALLERY */
+/* ================= CATEGORY BUTTONS (NEW LOOK) ================= */
+
+.filters{
+text-align:center;
+padding:15px;
+}
+
+.filters button{
+background:white;
+border:1px solid #ddd;
+margin:5px;
+padding:10px 15px;
+border-radius:20px;
+transition:0.3s;
+}
+
+.filters button:hover{
+background:black;
+color:white;
+transform:scale(1.05);
+}
+
+/* ================= GALLERY ================= */
+
 .gallery{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -63,13 +114,66 @@ padding:20px;
 background:white;
 border-radius:15px;
 overflow:hidden;
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
+transition:0.3s;
+}
+
+.item:hover{
+transform:scale(1.03);
 }
 
 .item img{
 width:100%;
 }
 
-/* MODAL */
+/* ================= CONTACT PAGE FIX ================= */
+
+.contact-hero{
+text-align:center;
+padding:80px 20px;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+}
+
+.contact-card{
+max-width:500px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.contact-card input,
+.contact-card textarea{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid #ddd;
+font-family:'Poppins',sans-serif;
+}
+
+/* ================= INSTAGRAM BUTTON ================= */
+
+.insta-btn{
+display:inline-block;
+margin-top:15px;
+padding:12px 20px;
+background:#E1306C;
+color:white;
+text-decoration:none;
+border-radius:12px;
+font-weight:600;
+transition:0.3s;
+}
+
+.insta-btn:hover{
+transform:scale(1.05);
+}
+
+/* ================= MODAL ================= */
+
 .modal{
 display:none;
 position:fixed;
@@ -81,7 +185,13 @@ justify-content:center;
 z-index:999;
 }
 
-/* ADD BUTTON */
+.modal img{
+max-width:85%;
+border-radius:10px;
+}
+
+/* ================= ADD BUTTON ================= */
+
 .add-btn{
 position:fixed;
 bottom:20px;
@@ -97,9 +207,15 @@ align-items:center;
 justify-content:center;
 cursor:pointer;
 z-index:999;
+transition:0.3s;
 }
 
-/* UPLOAD */
+.add-btn:hover{
+transform:scale(1.1);
+}
+
+/* ================= UPLOAD BOX ================= */
+
 .upload-box{
 display:none;
 position:fixed;
@@ -107,22 +223,37 @@ bottom:90px;
 right:20px;
 background:white;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* PROFILE */
+/* ================= PROFILE ================= */
+
 .profile-wrapper{
 position:relative;
 }
 
 .profile-menu{
 position:absolute;
-top:40px;
+top:45px;
 right:0;
 background:white;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
+box-shadow:0 10px 20px rgba(0,0,0,0.15);
 border-radius:10px;
 width:120px;
 }
 
-.hidden{display:none;}
+.hidden{
+display:none;
+}
+
+/* ================= ANIMATION ================= */
+
+body{
+animation:fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
