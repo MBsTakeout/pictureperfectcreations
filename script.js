@@ -89,7 +89,7 @@ function updateUI(user){
 
   if (addBtn){
     addBtn.style.display =
-      user && admins.includes(user.email) ? "flex" : "none";
+      (user && admins.includes(user.email)) ? "flex" : "none";
   }
 }
 
@@ -128,8 +128,8 @@ async function uploadImage(){
     }
 
     await db.collection("gallery").add({
-      title,
-      category,
+      title: title,
+      category: category,
       imageUrl: data.secure_url,
       createdAt: Date.now()
     });
@@ -161,14 +161,14 @@ function loadGallery(){
         const id = doc.id;
 
         const div = document.createElement("div");
-        div.className = `item ${d.category}`;
+        div.className = "item " + (d.category || "");
 
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
-          <p>${d.title}</p>
+          <p>${d.title || ""}</p>
 
           <div class="admin-controls" data-id="${id}">
-            <button onclick="editImage('${id}', '${d.title}')">Edit</button>
+            <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
         `;
@@ -223,6 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
+
+  if (box) box.style.display = "none"; // 🔥 FIX: ALWAYS HIDDEN ON LOAD
 
   if (btn && box){
     btn.onclick = () => {
