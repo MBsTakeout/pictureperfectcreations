@@ -12,11 +12,13 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
 <header>
   <h1>Picture Perfect Creations</h1>
 
@@ -26,9 +28,21 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <button class="login-btn" onclick="openAuth()">Sign in</button>
+  <!-- PROFILE DROPDOWN -->
+  <div class="profile-wrapper">
+
+    <button id="authBtn" class="login-btn" onclick="openAuth()">
+      Sign in
+    </button>
+
+    <div id="profileMenu" class="profile-menu">
+      <button onclick="logout()">Log out</button>
+    </div>
+
+  </div>
 </header>
 
+<!-- ================= HERO ================= -->
 <section class="hero">
   <div class="hero-card">
     <h2>Luxury Custom Creations</h2>
@@ -37,22 +51,22 @@
   </div>
 </section>
 
-<!-- AUTH MODAL -->
+<!-- ================= AUTH MODAL ================= -->
 <div id="authModal" class="modal">
   <div class="modal-box">
 
     <h2>Welcome</h2>
 
-    <button onclick="googleLogin()" class="google-btn">Continue with Google</button>
+    <button onclick="googleLogin()" class="google-btn">
+      Continue with Google
+    </button>
 
     <hr>
 
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
 
-    <button id="authBtn" onclick="openAuth()" class="login-btn">
-  Sign in
-</button>
+    <button onclick="emailLogin()">Sign in</button>
     <button onclick="emailSignup()">Create account</button>
 
     <p onclick="closeAuth()" style="cursor:pointer;">Close</p>
@@ -60,8 +74,7 @@
   </div>
 </div>
 
-<script src="script.js"></script>
-
+<!-- ================= ADMIN UPLOAD ================= -->
 <div id="addBtn" class="add-btn">+</div>
 
 <div id="uploadBox" class="upload-box">
@@ -79,6 +92,8 @@
 
   <button onclick="uploadImage()">Upload</button>
 </div>
-  
+
+<script src="script.js"></script>
+
 </body>
 </html>
