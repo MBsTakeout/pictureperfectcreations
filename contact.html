@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Contact | Picture Perfect Creations</title>
-<link rel="icon" type="image/png" href="images/favicon.png">
-<link rel="apple-touch-icon" href="images/favicon.png">
-<link rel="shortcut icon" href="images/favicon.png">
+<title>Contact</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css">
+
 </head>
 
 <body>
@@ -23,64 +21,39 @@
     <a href="gallery.html">Gallery</a>
     <a href="contact.html">Contact</a>
   </nav>
-
-  <button onclick="toggleDarkMode()" class="dark-btn">🌙</button>
 </header>
 
-<!-- HERO SECTION -->
 <section class="contact-hero">
   <h2>Let’s Create Something Amazing ✨</h2>
-  <p>For all orders & bookings, please DM us on Instagram.</p>
 
-  <!-- INSTAGRAM BOOKING BUTTON -->
-  <a 
-    href="https://www.instagram.com/_pictureperfectcreations/" 
-    target="_blank"
-    class="insta-btn"
-  >
-    📩 Book via Instagram DM
+  <a class="insta-btn"
+     href="https://www.instagram.com/_pictureperfectcreations/"
+     target="_blank">
+    📩 Book via Instagram
   </a>
 </section>
 
-<!-- CONTACT FORM -->
 <section class="contact-card">
 
-  <h3>Send us a message</h3>
+  <h3>Send Message</h3>
 
- <form name="contact" method="POST" data-netlify="true">
+  <form name="contact" method="POST" data-netlify="true">
 
-  <!-- REQUIRED for Netlify detection -->
-  <input type="hidden" name="form-name" value="contact" />
+    <input type="hidden" name="form-name" value="contact">
 
-  <p>
-    <label>Name</label>
-    <input type="text" name="name" required />
-  </p>
+    <input type="text" name="name" placeholder="Name" required>
 
-  <p>
-    <label>Email</label>
-    <input type="email" name="email" required />
-  </p>
+    <input type="email" name="email" placeholder="Email" required>
 
-  <p>
-    <label>How can we help?</label>
-    <textarea name="message" placeholder="e.g. Vinyl design, balloons, wedding cards..." required></textarea>
-  </p>
+    <textarea name="message" placeholder="Message..." required></textarea>
 
-  <button type="submit">Send Message</button>
+    <button type="submit">Send</button>
 
-</form>
+  </form>
 
-  <p class="small-text">
-    💡 We usually reply within 24 hours
-  </p>
+  <p class="small-text">We reply within 24 hours</p>
 
 </section>
-
-<!-- FOOTER -->
-<footer>
-  © 2026 Picture Perfect Creations
-</footer>
 
 <script src="script.js"></script>
 
