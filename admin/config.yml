@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: MBsTakeout/pictureperfectcreations
   branch: main
 
 media_folder: "images"
