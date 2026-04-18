@@ -1,56 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Picture Perfect Admin</title>
-
-<style>
-body {
-  font-family: Arial;
-  background: #0f0f0f;
-  color: white;
-  margin: 0;
-}
-
-.login, .dashboard {
-  max-width: 500px;
-  margin: auto;
-  padding: 40px;
-}
-
-input, select, button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: none;
-}
-
-button {
-  background: #ff4d6d;
-  color: white;
-  cursor: pointer;
-}
-
-.card {
-  background: #1c1c1c;
-  padding: 15px;
-  margin-top: 10px;
-  border-radius: 10px;
-}
-</style>
+  <title>Admin Panel</title>
 </head>
-
 <body>
 
-<div class="login" id="loginBox">
-  <h2>Admin Login</h2>
-  <input type="password" id="pass" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
+<h2>Login</h2>
+<input type="password" id="pass">
+<button onclick="login()">Login</button>
 
-<div class="dashboard" id="dash" style="display:none;">
-  <h2>Upload New Work</h2>
+<div id="panel" style="display:none;">
+  <h2>Upload Work</h2>
 
   <input id="title" placeholder="Title">
 
@@ -65,33 +25,9 @@ button {
   <input type="file" id="image">
 
   <button onclick="upload()">Upload</button>
-
-  <h3>Existing Items</h3>
-  <div id="list"></div>
 </div>
 
-<script>
-const PASSWORD = "admin123";
-
-function login() {
-  if (document.getElementById("pass").value === PASSWORD) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("dash").style.display = "block";
-    loadItems();
-  } else {
-    alert("Wrong password");
-  }
-}
-
-function upload() {
-  alert("Next step: connect GitHub API to save file + image upload");
-}
-
-function loadItems() {
-  document.getElementById("list").innerHTML =
-    "<div class='card'>Example item (next step will load real GitHub data)</div>";
-}
-</script>
+<script src="admin.js"></script>
 
 </body>
 </html>
