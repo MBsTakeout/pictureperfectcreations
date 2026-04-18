@@ -1,57 +1,54 @@
-const repo = "MBsTakeout/pictureperfectcreations";
-const token = "";
+const WORKER_URL = "pictureperfect-admin-api.pictureperfectcreations.workers.dev";
 
 function login() {
   const pass = document.getElementById("pass").value;
+
   if (pass === "admin123") {
     document.getElementById("panel").style.display = "block";
+    document.getElementById("loginBox").style.display = "none";
   } else {
     alert("Wrong password");
   }
 }
 
-function upload() {
+async function upload() {
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
   const file = document.getElementById("image").files[0];
 
-  if (!title || !file) {
-    alert("Fill all fields");
+  if (!title || !category || !file) {
+    alert("Please fill all fields");
     return;
   }
 
   const reader = new FileReader();
 
   reader.onload = async function () {
-    const base64 = reader.result.split(",")[1];
+    const imageData = reader.result;
 
-    const filename = `content/gallery/${Date.now()}.json`;
-
-    const data = {
-      message: "Add gallery item",
-      content: btoa(JSON.stringify({
-        title,
-        category,
-        image: reader.result
-      }))
-    };
-
-    const res = await fetch(
-      `https://api.github.com/repos/${repo}/contents/${filename}`,
-      {
-        method: "PUT",
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
         headers: {
-          Authorization: `token ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
-      }
-    );
+        body: JSON.stringify({
+          title,
+          category,
+          image: imageData
+        })
+      });
 
-    if (res.ok) {
-      alert("✅ Uploaded successfully!");
-    } else {
-      alert("❌ Upload failed");
+      if (res.ok) {
+        alert("✅ Successfully uploaded!");
+        document.getElementById("title").value = "";
+        document.getElementById("image").value = "";
+      } else {
+        alert("❌ Upload failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Server error");
     }
   };
 
