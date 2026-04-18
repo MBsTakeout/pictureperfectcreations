@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Picture Perfect Creations</title>
 
-<link rel="icon" href="images/favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css">
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -16,14 +15,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 </head>
-<body>
 
-<!-- 🍪 COOKIE -->
-<div id="cookieBanner" class="cookie">
-  <p>We use cookies to improve your experience ✨</p>
-  <button onclick="acceptCookies()">Accept</button>
-  <button onclick="rejectCookies()">Reject</button>
-</div>
+<body>
 
 <!-- HEADER -->
 <header>
@@ -35,46 +28,39 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <button onclick="toggleDarkMode()">🌙</button>
+  <button class="login-btn" onclick="openLogin()">Sign in</button>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <h2>✨ Luxury Custom Creations</h2>
-  <p>Vinyl • Bobo Balloons • Boards • Stickers • Wedding Cards</p>
+  <div class="hero-card">
+    <h2>✨ Luxury Custom Creations</h2>
+    <p>Vinyl • Balloons • Boards • Stickers • Wedding Cards</p>
+    <a href="gallery.html" class="btn">Explore Gallery</a>
+  </div>
 </section>
 
 <!-- INFO -->
 <section class="grid-info">
-  <div>🎨 Custom Designs</div>
-  <div>🎈 Event Decor</div>
-  <div>💌 Wedding Stationery</div>
-  <div>✨ Premium Quality</div>
+  <div class="info-card">🎨 Custom Designs</div>
+  <div class="info-card">🎈 Event Decor</div>
+  <div class="info-card">💌 Wedding Stationery</div>
+  <div class="info-card">✨ Premium Quality</div>
 </section>
 
-<!-- 🔐 LOGIN -->
-<section class="login">
-  <h2>Admin Login</h2>
+<!-- GALLERY PREVIEW -->
+<section class="gallery" id="gallery"></section>
 
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
+<!-- ADMIN UPLOAD BUTTON -->
+<div id="addBtn" class="add-btn">➕</div>
 
-  <button onclick="login()">Login</button>
-  <button onclick="logout()">Logout</button>
-</section>
-
-<!-- ➕ ADMIN BUTTON -->
-<div id="addBtn" style="display:none; font-size:40px; cursor:pointer; text-align:center;">
-  ➕
-</div>
-
-<!-- UPLOAD PANEL -->
-<div id="uploadBox" style="display:none;">
+<!-- UPLOAD BOX -->
+<div id="uploadBox" class="upload-box">
   <input type="text" id="title" placeholder="Title">
 
   <select id="category">
     <option>Vinyl</option>
-    <option>Bobo Balloons</option>
+    <option>Balloons</option>
     <option>Boards</option>
     <option>Stickers</option>
     <option>Wedding Cards</option>
@@ -85,33 +71,26 @@
   <button onclick="uploadImage()">Upload</button>
 </div>
 
-<!-- 🖼️ GALLERY -->
-<section id="gallery"></section>
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal">
+  <div class="modal-box">
+    <h2>Login</h2>
 
-<!-- ABOUT -->
-<section class="about">
-  <h2>About Us</h2>
-  <p>We create high-end personalised designs for events, weddings and celebrations.</p>
-</section>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
-<!-- CTA -->
-<section class="cta">
-  <h2>Ready to create something amazing?</h2>
-  <a href="contact.html">Contact Us</a>
-</section>
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+    <button onclick="closeLogin()">Close</button>
+  </div>
+</div>
 
-<footer>© 2026 Picture Perfect Creations</footer>
+<!-- IMAGE MODAL -->
+<div id="imgModal" class="modal" onclick="closeImg()">
+  <img id="modalImg">
+</div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
-
-<!-- TOGGLE UPLOAD BOX -->
-<script>
-document.getElementById("addBtn").onclick = () => {
-  const box = document.getElementById("uploadBox");
-  box.style.display = box.style.display === "block" ? "none" : "block";
-};
-</script>
 
 </body>
 </html>
