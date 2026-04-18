@@ -102,7 +102,7 @@ async function uploadImage(){
 
   const form = new FormData();
   form.append("file", file);
-  form.append("upload_preset", "ml_default");
+  form.append("upload_preset", "Hhggbbhj");
 
   try {
 
