@@ -207,7 +207,31 @@ function closeModal(){
   const modal = document.getElementById("modal");
   if (modal) modal.style.display = "none";
 }
+document.addEventListener("DOMContentLoaded", () => {
 
+  const searchInput = document.getElementById("searchInput");
+
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", () => {
+
+    const value = searchInput.value.toLowerCase().trim();
+
+    const items = document.querySelectorAll(".item");
+
+    items.forEach(item => {
+
+      const title = item.querySelector("p")?.innerText.toLowerCase() || "";
+      const category = item.className.toLowerCase();
+
+      const match = title.includes(value) || category.includes(value);
+
+      item.style.display = match ? "block" : "none";
+    });
+
+  });
+
+});
 /* ================= TOGGLE UPLOAD ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
