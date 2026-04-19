@@ -20,6 +20,7 @@
 
 <!-- ================= HEADER ================= -->
 <header class="main-header">
+
   <h1 class="logo">Picture Perfect</h1>
 
   <nav class="nav-links">
@@ -28,19 +29,11 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-
-  <!-- PROFILE DROPDOWN -->
   <div class="profile-wrapper">
-
-    <button id="authBtn" class="login-btn" onclick="openAuth()">
-      Sign in
-    </button>
-
-    <div id="profileMenu" class="profile-menu">
-      <button onclick="logout()">Log out</button>
-    </div>
-
+    <button id="authBtn" class="login-btn" onclick="openAuth()">Sign in</button>
+    <button onclick="logout()" class="logout-btn">Logout</button>
   </div>
+
 </header>
 
 <!-- ================= HERO ================= -->
@@ -52,33 +45,48 @@
   </div>
 </section>
 
-<!-- ================= AUTH MODAL ================= -->
-<div id="authModal" class="modal">
-  <div class="modal-box">
+<!-- ================= FACEBOOK STYLE LOGIN ================= -->
+<div id="authModal" class="auth-overlay">
 
-    <h2>Welcome</h2>
+  <div class="auth-box">
 
-    <button onclick="googleLogin()" class="google-btn">
-      Continue with Google
-    </button>
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+      <h1>Picture Perfect</h1>
+      <p>Luxury custom creations made simple.</p>
+    </div>
 
-    <hr>
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
 
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+      <input id="email" type="email" placeholder="Email address">
+      <input id="password" type="password" placeholder="Password">
 
-    <button onclick="emailLogin()">Sign in</button>
-    <button onclick="emailSignup()">Create account</button>
+      <button class="login-main-btn" onclick="emailLogin()">Log In</button>
 
-    <p onclick="closeAuth()" style="cursor:pointer;">Close</p>
+      <button class="google-btn" onclick="googleLogin()">
+        Continue with Google
+      </button>
+
+      <div class="auth-divider"></div>
+
+      <button class="signup-btn" onclick="emailSignup()">
+        Create new account
+      </button>
+
+      <p class="close-auth" onclick="closeAuth()">Close</p>
+
+    </div>
 
   </div>
+
 </div>
 
 <!-- ================= ADMIN UPLOAD ================= -->
 <div id="addBtn" class="add-btn">+</div>
 
 <div id="uploadBox" class="upload-box">
+
   <input id="title" placeholder="Title">
 
   <select id="category">
@@ -92,8 +100,10 @@
   <input type="file" id="file">
 
   <button onclick="uploadImage()">Upload</button>
+
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script src="script.js"></script>
 
 </body>
