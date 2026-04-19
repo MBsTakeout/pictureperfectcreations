@@ -1,3 +1,8 @@
+.google-btn {
+  background: white;
+  color: black; /* or something light */
+}
+
 .auth-link{
 font-size:13px;
 color:#1877f2;
