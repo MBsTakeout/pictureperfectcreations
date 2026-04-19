@@ -5,7 +5,7 @@ background:linear-gradient(135deg,#fdfbfb,#ebedee);
 color:#111;
 }
 
-/* ================= HEADER (UNIFIED) ================= */
+/* ================= HEADER ================= */
 
 header, .main-header{
 display:flex;
@@ -32,7 +32,7 @@ nav a:hover, .nav-links a:hover{
 color:#ff4d6d;
 }
 
-/* ================= BUTTONS (IMPROVED) ================= */
+/* ================= BUTTONS ================= */
 
 button, .btn, .login-btn{
 padding:10px 16px;
@@ -50,10 +50,17 @@ transform:scale(1.05);
 background:#ff4d6d;
 }
 
-/* Better primary CTA buttons */
-.btn{
-display:inline-block;
-text-decoration:none;
+.signup-mini{
+background:transparent;
+color:#111;
+border:1px solid #ddd;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.signup-mini:hover{
+background:#f5f5f5;
 }
 
 /* ================= HERO ================= */
@@ -77,7 +84,7 @@ border-radius:20px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-/* ================= CONTACT CARD ================= */
+/* ================= CONTACT PAGE ================= */
 
 .contact-card{
 max-width:500px;
@@ -104,7 +111,6 @@ min-height:120px;
 resize:none;
 }
 
-/* Instagram button */
 .insta-btn{
 display:inline-block;
 margin-top:15px;
@@ -120,7 +126,7 @@ transition:0.3s;
 transform:scale(1.05);
 }
 
-/* ================= GALLERY GRID ================= */
+/* ================= GALLERY ================= */
 
 .gallery{
 display:grid;
@@ -129,7 +135,6 @@ gap:15px;
 padding:20px;
 }
 
-/* Responsive */
 @media (max-width:1100px){
 .gallery{grid-template-columns:repeat(3,1fr);}
 }
@@ -142,15 +147,12 @@ padding:20px;
 .gallery{grid-template-columns:repeat(1,1fr);}
 }
 
-/* ================= GALLERY ITEMS ================= */
-
 .item{
 background:white;
 border-radius:15px;
 overflow:hidden;
 box-shadow:0 5px 20px rgba(0,0,0,0.08);
 transition:0.3s ease;
-animation:fadeUp 0.4s ease;
 position:relative;
 }
 
@@ -159,7 +161,6 @@ transform:translateY(-6px) scale(1.02);
 box-shadow:0 15px 35px rgba(0,0,0,0.15);
 }
 
-/* FIX: no zoom crop, full image visible */
 .item img{
 width:100%;
 height:250px;
@@ -194,7 +195,7 @@ max-width:85%;
 border-radius:10px;
 }
 
-/* ================= UPLOAD BUTTON ================= */
+/* ================= UPLOAD ================= */
 
 .add-btn{
 position:fixed;
@@ -210,16 +211,8 @@ display:none;
 align-items:center;
 justify-content:center;
 cursor:pointer;
-transition:0.3s;
 z-index:999;
 }
-
-.add-btn:hover{
-background:#ff4d6d;
-transform:scale(1.1);
-}
-
-/* ================= UPLOAD BOX ================= */
 
 .upload-box{
 position:fixed;
@@ -235,13 +228,26 @@ z-index:999;
 
 /* ================= PROFILE ================= */
 
-.avatar{
-width:25px;
-height:25px;
-border-radius:50%;
+.profile-wrapper{
+display:flex;
+gap:10px;
+align-items:center;
+position:relative;
 }
 
-/* ================= FACEBOOK STYLE AUTH SUPPORT ================= */
+.profile-menu{
+position:absolute;
+top:50px;
+right:0;
+background:white;
+border:1px solid #eee;
+border-radius:10px;
+padding:10px;
+display:none;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* ================= AUTH FACEBOOK STYLE ================= */
 
 .auth-overlay{
 position:fixed;
@@ -331,10 +337,5 @@ color:#666;
 
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
-}
-
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(15px);}
 to{opacity:1;transform:translateY(0);}
 }
