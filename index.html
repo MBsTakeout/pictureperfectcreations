@@ -31,7 +31,9 @@
 
   <div class="profile-wrapper">
 
-    <button id="authBtn" class="login-btn" onclick="openAuth()">Sign in</button>
+    <button id="authBtn" class="login-btn" onclick="openAuth('login')">
+      Sign in
+    </button>
 
     <button id="signupBtn" class="signup-mini" onclick="openAuth('signup')">
       Sign up
@@ -61,29 +63,39 @@
 
   <div class="auth-box">
 
-    <!-- LEFT -->
+    <!-- LEFT SIDE -->
     <div class="auth-left">
       <h1>Picture Perfect</h1>
       <p>Luxury custom creations made simple.</p>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT SIDE -->
     <div class="auth-right">
 
       <input id="email" type="email" placeholder="Email address">
       <input id="password" type="password" placeholder="Password">
 
-      <button class="login-main-btn" onclick="emailLogin()">Log In</button>
+      <!-- MAIN ACTION BUTTON (changes between login/signup in JS) -->
+      <button id="mainAuthBtn" class="login-main-btn" onclick="handleAuthAction()">
+        Sign in
+      </button>
 
+      <!-- GOOGLE -->
       <button class="google-btn" onclick="googleLogin()">
         Continue with Google
       </button>
 
       <div class="auth-divider"></div>
 
-      <button class="signup-btn" onclick="emailSignup()">
-        Create new account
-      </button>
+      <!-- FORGOT PASSWORD -->
+      <p class="auth-link" onclick="forgotPassword()">
+        Forgot password?
+      </p>
+
+      <!-- SWITCH MODE -->
+      <p id="switchText" class="auth-link" onclick="toggleAuthMode()">
+        Create account
+      </p>
 
       <p class="close-auth" onclick="closeAuth()">Close</p>
 
