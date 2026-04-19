@@ -12,6 +12,7 @@ const db = firebase.firestore();
 const admins = ["bm015059@gmail.com"];
 
 /* ================= SAFE INIT ================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
   const addBtn = document.getElementById("addBtn");
@@ -20,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (addBtn) addBtn.style.display = "none";
   if (box) box.style.display = "none";
 
-  loadGallery();
   setupSearch();
 });
 
@@ -37,6 +37,7 @@ function closeAuth(){
 }
 
 function emailSignup(){
+
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
@@ -48,6 +49,7 @@ function emailSignup(){
 }
 
 function emailLogin(){
+
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
@@ -57,6 +59,7 @@ function emailLogin(){
 }
 
 function googleLogin(){
+
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
@@ -89,20 +92,17 @@ function updateUI(user){
     }
   }
 
-  // ONLY ADMINS SEE + BUTTON
   if (addBtn){
-    if (user && admins.includes(user.email)){
-      addBtn.style.display = "flex";
-    } else {
-      addBtn.style.display = "none";
-    }
+    addBtn.style.display =
+      (user && admins.includes(user.email)) ? "flex" : "none";
   }
-
-  toggleAdminControls(user);
 }
+
+/* ================= AUTH STATE (IMPORTANT FIX) ================= */
 
 auth.onAuthStateChanged(user => {
   updateUI(user);
+  loadGallery(); // 👈 FIX: only load AFTER auth is ready
 });
 
 /* ================= CLOUDINARY UPLOAD ================= */
@@ -128,7 +128,10 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url) return alert("Upload failed");
+    if (!data.secure_url) {
+      console.log(data);
+      return alert("Upload failed");
+    }
 
     await db.collection("gallery").add({
       title,
@@ -145,7 +148,7 @@ async function uploadImage(){
   }
 }
 
-/* ================= LOAD GALLERY ================= */
+/* ================= GALLERY ================= */
 
 function loadGallery(){
 
@@ -174,7 +177,7 @@ function loadGallery(){
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title || ""}</p>
 
-          <div class="admin-controls" data-id="${id}">
+          <div class="admin-controls">
             <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
@@ -183,31 +186,24 @@ function loadGallery(){
         gallery.appendChild(div);
       });
 
-      auth.currentUser && toggleAdminControls(auth.currentUser);
     });
 }
 
-/* ================= ADMIN CONTROL LOCK ================= */
+/* ================= SECURITY FIX (IMPORTANT) ================= */
 
-function toggleAdminControls(user){
-
-  document.querySelectorAll(".admin-controls").forEach(el => {
-
-    if (user && admins.includes(user.email)){
-      el.style.display = "flex";
-    } else {
-      el.style.display = "none";
-    }
-
-  });
+function isAdmin(){
+  const user = auth.currentUser;
+  return user && admins.includes(user.email);
 }
 
-/* ================= EDIT / DELETE ================= */
+/* ================= EDIT / DELETE (LOCKED) ================= */
 
 async function editImage(id, oldTitle){
 
-  const user = auth.currentUser;
-  if (!user || !admins.includes(user.email)) return;
+  if (!isAdmin()) {
+    alert("Not allowed");
+    return;
+  }
 
   const newTitle = prompt("Edit title:", oldTitle);
   if (!newTitle) return;
@@ -219,8 +215,10 @@ async function editImage(id, oldTitle){
 
 async function deleteImage(id){
 
-  const user = auth.currentUser;
-  if (!user || !admins.includes(user.email)) return;
+  if (!isAdmin()) {
+    alert("Not allowed");
+    return;
+  }
 
   if (!confirm("Delete this image?")) return;
 
@@ -255,15 +253,18 @@ function setupSearch(){
 
     document.querySelectorAll(".item").forEach(item => {
 
-      const text = item.innerText.toLowerCase();
+      const title = item.querySelector("p")?.innerText.toLowerCase() || "";
+      const category = item.className.toLowerCase();
 
-      item.style.display = text.includes(value) ? "block" : "none";
+      const match = title.includes(value) || category.includes(value);
+
+      item.style.display = match ? "block" : "none";
     });
 
   });
 }
 
-/* ================= CATEGORY FILTER FIX ================= */
+/* ================= CATEGORY FILTER ================= */
 
 function filterCategory(category){
 
@@ -280,7 +281,7 @@ function filterCategory(category){
   });
 }
 
-/* ================= TOGGLE UPLOAD ================= */
+/* ================= UPLOAD TOGGLE ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -288,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const box = document.getElementById("uploadBox");
 
   if (btn && box){
-
     btn.onclick = () => {
       box.style.display =
         box.style.display === "block" ? "none" : "block";
