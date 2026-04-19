@@ -11,7 +11,9 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-/* ================= SAFE INIT ================= */
+let authReady = false;
+
+/* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -24,7 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSearch();
 });
 
-/* ================= AUTH ================= */
+/* ================= AUTH STATE ================= */
+
+auth.onAuthStateChanged(user => {
+
+  authReady = true;
+
+  updateUI(user);
+  loadGallery();
+});
+
+/* ================= AUTH UI ================= */
 
 function openAuth(){
   const modal = document.getElementById("authModal");
@@ -71,6 +83,19 @@ function logout(){
   auth.signOut();
 }
 
+/* ================= SECURITY CHECK ================= */
+
+function isAdmin(){
+
+  const user = auth.currentUser;
+
+  return (
+    authReady &&
+    user &&
+    admins.includes(user.email)
+  );
+}
+
 /* ================= UI ================= */
 
 function updateUI(user){
@@ -93,17 +118,9 @@ function updateUI(user){
   }
 
   if (addBtn){
-    addBtn.style.display =
-      (user && admins.includes(user.email)) ? "flex" : "none";
+    addBtn.style.display = isAdmin() ? "flex" : "none";
   }
 }
-
-/* ================= AUTH STATE (IMPORTANT FIX) ================= */
-
-auth.onAuthStateChanged(user => {
-  updateUI(user);
-  loadGallery(); // 👈 FIX: only load AFTER auth is ready
-});
 
 /* ================= CLOUDINARY UPLOAD ================= */
 
@@ -128,10 +145,7 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url) {
-      console.log(data);
-      return alert("Upload failed");
-    }
+    if (!data.secure_url) return alert("Upload failed");
 
     await db.collection("gallery").add({
       title,
@@ -189,21 +203,11 @@ function loadGallery(){
     });
 }
 
-/* ================= SECURITY FIX (IMPORTANT) ================= */
-
-function isAdmin(){
-  const user = auth.currentUser;
-  return user && admins.includes(user.email);
-}
-
 /* ================= EDIT / DELETE (LOCKED) ================= */
 
 async function editImage(id, oldTitle){
 
-  if (!isAdmin()) {
-    alert("Not allowed");
-    return;
-  }
+  if (!isAdmin()) return alert("Not allowed");
 
   const newTitle = prompt("Edit title:", oldTitle);
   if (!newTitle) return;
@@ -215,10 +219,7 @@ async function editImage(id, oldTitle){
 
 async function deleteImage(id){
 
-  if (!isAdmin()) {
-    alert("Not allowed");
-    return;
-  }
+  if (!isAdmin()) return alert("Not allowed");
 
   if (!confirm("Delete this image?")) return;
 
@@ -228,6 +229,7 @@ async function deleteImage(id){
 /* ================= MODAL ================= */
 
 function openModal(img){
+
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modalImg");
 
@@ -236,11 +238,12 @@ function openModal(img){
 }
 
 function closeModal(){
+
   const modal = document.getElementById("modal");
   if (modal) modal.style.display = "none";
 }
 
-/* ================= LIVE SEARCH ================= */
+/* ================= SEARCH ================= */
 
 function setupSearch(){
 
@@ -270,14 +273,10 @@ function filterCategory(category){
 
   document.querySelectorAll(".item").forEach(item => {
 
-    if (category === "all"){
-      item.style.display = "block";
-      return;
-    }
+    if (category === "all") return item.style.display = "block";
 
-    item.style.display = item.classList.contains(category)
-      ? "block"
-      : "none";
+    item.style.display =
+      item.classList.contains(category) ? "block" : "none";
   });
 }
 
