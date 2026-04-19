@@ -24,11 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
   loadGallery();
 });
 
-/* ================= AUTH MODAL ================= */
+/* ================= AUTH ================= */
 
-function openAuth(){
+function openAuth(mode){
   const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "flex";
+  if (!modal) return;
+  modal.style.display = "flex";
 }
 
 function closeAuth(){
@@ -36,7 +37,48 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
-/* ================= AUTH ================= */
+/* ================= AUTH STATE ================= */
+
+auth.onAuthStateChanged(user => {
+  updateUI(user);
+  loadGallery(); // IMPORTANT FIX
+});
+
+/* ================= UI ================= */
+
+function updateUI(user){
+
+  const btn = document.getElementById("authBtn");
+  const addBtn = document.getElementById("addBtn");
+
+  if (!btn) return;
+
+  // NOT LOGGED IN
+  if (!user){
+
+    btn.innerText = "Sign in";
+    btn.onclick = () => openAuth("login");
+
+    if (addBtn) addBtn.style.display = "none";
+
+  } 
+  // LOGGED IN
+  else {
+
+    btn.innerHTML = user.photoURL
+      ? `<img src="${user.photoURL}" class="avatar">`
+      : "Profile";
+
+    btn.onclick = toggleProfileMenu;
+
+    if (addBtn){
+      addBtn.style.display =
+        admins.includes(user.email) ? "flex" : "none";
+    }
+  }
+}
+
+/* ================= LOGIN / SIGNUP ================= */
 
 function emailLogin(){
 
@@ -54,10 +96,7 @@ function emailSignup(){
   const password = document.getElementById("password")?.value;
 
   auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      alert("Account created");
-      closeAuth();
-    })
+    .then(() => closeAuth())
     .catch(err => alert(err.message));
 }
 
@@ -70,47 +109,15 @@ function googleLogin(){
 }
 
 function logout(){
+
   auth.signOut().then(() => {
+
     updateUI(null);
+
     const menu = document.getElementById("profileMenu");
     if (menu) menu.style.display = "none";
+
   });
-}
-
-/* ================= UI ================= */
-
-auth.onAuthStateChanged(user => {
-  updateUI(user);
-  loadGallery(); // IMPORTANT: reload permissions correctly
-});
-
-function updateUI(user){
-
-  const btn = document.getElementById("authBtn");
-  const addBtn = document.getElementById("addBtn");
-
-  if (!btn) return;
-
-  if (!user){
-
-    btn.innerText = "Sign in";
-    btn.onclick = openAuth;
-
-    if (addBtn) addBtn.style.display = "none";
-
-  } else {
-
-    btn.innerHTML = user.photoURL
-      ? `<img src="${user.photoURL}" class="avatar">`
-      : "Profile";
-
-    btn.onclick = toggleProfileMenu;
-
-    if (addBtn){
-      addBtn.style.display =
-        admins.includes(user.email) ? "flex" : "none";
-    }
-  }
 }
 
 /* ================= PROFILE MENU ================= */
@@ -186,8 +193,6 @@ async function uploadImage(){
 function loadGallery(){
 
   const gallery = document.getElementById("gallery");
-  const loading = document.getElementById("loadingText");
-
   if (!gallery) return;
 
   db.collection("gallery")
@@ -195,8 +200,6 @@ function loadGallery(){
     .onSnapshot(snapshot => {
 
       gallery.innerHTML = "";
-
-      if (loading) loading.style.display = "none";
 
       const user = auth.currentUser;
       const isAdmin = user && admins.includes(user.email);
@@ -233,7 +236,7 @@ function loadGallery(){
     });
 }
 
-/* ================= EDIT ================= */
+/* ================= EDIT / DELETE ================= */
 
 async function editImage(id){
 
@@ -250,8 +253,6 @@ async function editImage(id){
     title: newTitle
   });
 }
-
-/* ================= DELETE ================= */
 
 async function deleteImage(id){
 
@@ -293,10 +294,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const value = searchInput.value.toLowerCase();
 
     document.querySelectorAll(".item").forEach(item => {
-
       const text = item.innerText.toLowerCase();
       item.style.display = text.includes(value) ? "block" : "none";
-
     });
 
   });
