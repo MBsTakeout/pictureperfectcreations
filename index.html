@@ -30,19 +30,30 @@
   </nav>
 
   <div class="profile-wrapper">
+
     <button id="authBtn" class="login-btn" onclick="openAuth()">Sign in</button>
-    <button onclick="logout()" class="logout-btn">Logout</button>
+
+    <button id="signupBtn" class="signup-mini" onclick="openAuth('signup')">
+      Sign up
+    </button>
+
+    <div id="profileMenu" class="profile-menu">
+      <button onclick="logout()">Log out</button>
+    </div>
+
   </div>
 
 </header>
 
 <!-- ================= HERO ================= -->
 <section class="hero">
+
   <div class="hero-card">
     <h2>Luxury Custom Creations</h2>
     <p>Vinyl • Balloons • Boards • Stickers • Wedding Cards</p>
     <a class="btn" href="gallery.html">View Gallery</a>
   </div>
+
 </section>
 
 <!-- ================= FACEBOOK STYLE LOGIN ================= -->
@@ -50,13 +61,13 @@
 
   <div class="auth-box">
 
-    <!-- LEFT SIDE -->
+    <!-- LEFT -->
     <div class="auth-left">
       <h1>Picture Perfect</h1>
       <p>Luxury custom creations made simple.</p>
     </div>
 
-    <!-- RIGHT SIDE -->
+    <!-- RIGHT -->
     <div class="auth-right">
 
       <input id="email" type="email" placeholder="Email address">
@@ -103,7 +114,6 @@
 
 </div>
 
-<!-- ================= SCRIPT ================= -->
 <script src="script.js"></script>
 
 </body>
