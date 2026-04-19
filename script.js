@@ -26,16 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ================= AUTH MODAL ================= */
 
-function openAuth(mode){
+function openAuth(){
   const modal = document.getElementById("authModal");
-  if (!modal) return;
-
-  modal.style.display = "flex";
-
-  const title = modal.querySelector("h2");
-  if (title){
-    title.innerText = mode === "signup" ? "Create Account" : "Welcome";
-  }
+  if (modal) modal.style.display = "flex";
 }
 
 function closeAuth(){
@@ -43,102 +36,87 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
-let authMode = "login"; // login OR signup
+/* ================= AUTH ================= */
 
-function toggleAuthMode(){
-
-  authMode = authMode === "login" ? "signup" : "login";
-
-  const btn = document.getElementById("mainAuthBtn");
-  const switchText = document.getElementById("switchText");
-
-  if (authMode === "login"){
-    btn.innerText = "Sign in";
-    switchText.innerText = "Create account";
-  } else {
-    btn.innerText = "Create account";
-    switchText.innerText = "Log in";
-  }
-}
-
-/* ================= MAIN AUTH BUTTON ================= */
-
-function handleAuthAction(){
+function emailLogin(){
 
   const email = document.getElementById("email")?.value;
   const password = document.getElementById("password")?.value;
 
-  if (!email || !password) return alert("Fill in all fields");
-
-  if (authMode === "login"){
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => closeAuth())
-      .catch(err => alert(err.message));
-
-  } else {
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(async (userCred) => {
-
-        await userCred.user.sendEmailVerification();
-        alert("Account created! Check your email to verify.");
-        closeAuth();
-
-      })
-      .catch(err => alert(err.message));
-  }
-}
-
-/* ================= FORGOT PASSWORD ================= */
-
-function forgotPassword(){
-
-  const email = document.getElementById("email")?.value;
-
-  if (!email) return alert("Enter your email first");
-
-  auth.sendPasswordResetEmail(email)
-    .then(() => alert("Password reset email sent"))
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => closeAuth())
     .catch(err => alert(err.message));
 }
 
-/* ================= UI SYSTEM ================= */
+function emailSignup(){
 
-auth.onAuthStateChanged(user => updateUI(user));
+  const email = document.getElementById("email")?.value;
+  const password = document.getElementById("password")?.value;
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      alert("Account created");
+      closeAuth();
+    })
+    .catch(err => alert(err.message));
+}
+
+function googleLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+    .then(() => closeAuth())
+    .catch(err => alert(err.message));
+}
+
+function logout(){
+  auth.signOut().then(() => {
+    updateUI(null);
+    const menu = document.getElementById("profileMenu");
+    if (menu) menu.style.display = "none";
+  });
+}
+
+/* ================= UI ================= */
+
+auth.onAuthStateChanged(user => {
+  updateUI(user);
+  loadGallery(); // IMPORTANT: reload permissions correctly
+});
 
 function updateUI(user){
 
   const btn = document.getElementById("authBtn");
   const addBtn = document.getElementById("addBtn");
 
-  /* LOGIN BUTTON */
-  if (btn){
+  if (!btn) return;
 
-    if (!user){
-      btn.style.display = "inline-block";
-      btn.innerHTML = "Sign in";
-      btn.onclick = () => openAuth("login");
-    } else {
+  if (!user){
 
-      btn.innerHTML = user.photoURL
-        ? `<img src="${user.photoURL}" class="avatar">`
-        : "Profile";
+    btn.innerText = "Sign in";
+    btn.onclick = openAuth;
 
-      btn.onclick = toggleProfileMenu;
+    if (addBtn) addBtn.style.display = "none";
+
+  } else {
+
+    btn.innerHTML = user.photoURL
+      ? `<img src="${user.photoURL}" class="avatar">`
+      : "Profile";
+
+    btn.onclick = toggleProfileMenu;
+
+    if (addBtn){
+      addBtn.style.display =
+        admins.includes(user.email) ? "flex" : "none";
     }
-  }
-
-  /* ADD BUTTON ONLY ADMINS */
-  if (addBtn){
-    addBtn.style.display =
-      (user && admins.includes(user.email)) ? "flex" : "none";
   }
 }
 
-/* ================= PROFILE DROPDOWN ================= */
+/* ================= PROFILE MENU ================= */
 
 function toggleProfileMenu(){
+
   const menu = document.getElementById("profileMenu");
   if (!menu) return;
 
@@ -146,7 +124,6 @@ function toggleProfileMenu(){
     menu.style.display === "block" ? "none" : "block";
 }
 
-/* click outside closes menu */
 document.addEventListener("click", (e) => {
 
   const menu = document.getElementById("profileMenu");
@@ -159,7 +136,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* ================= CLOUDINARY UPLOAD ================= */
+/* ================= UPLOAD ================= */
 
 async function uploadImage(){
 
@@ -198,15 +175,13 @@ async function uploadImage(){
       uploadedBy: user.email
     });
 
-    alert("Uploaded!");
-
   } catch (err){
     console.error(err);
     alert("Upload error");
   }
 }
 
-/* ================= LOAD GALLERY ================= */
+/* ================= GALLERY ================= */
 
 function loadGallery(){
 
@@ -239,14 +214,13 @@ function loadGallery(){
           <p>${d.title || ""}</p>
         `;
 
-        /* ONLY ADMINS SEE CONTROLS */
         if (isAdmin){
 
           const controls = document.createElement("div");
           controls.className = "admin-controls";
 
           controls.innerHTML = `
-            <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
+            <button onclick="editImage('${id}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           `;
 
@@ -261,7 +235,7 @@ function loadGallery(){
 
 /* ================= EDIT ================= */
 
-async function editImage(id, oldTitle){
+async function editImage(id){
 
   const user = auth.currentUser;
 
@@ -269,7 +243,7 @@ async function editImage(id, oldTitle){
     return alert("Not allowed");
   }
 
-  const newTitle = prompt("Edit title:", oldTitle);
+  const newTitle = prompt("New title:");
   if (!newTitle) return;
 
   await db.collection("gallery").doc(id).update({
@@ -312,7 +286,6 @@ function closeModal(){
 document.addEventListener("DOMContentLoaded", () => {
 
   const searchInput = document.getElementById("searchInput");
-
   if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
@@ -322,9 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".item").forEach(item => {
 
       const text = item.innerText.toLowerCase();
+      item.style.display = text.includes(value) ? "block" : "none";
 
-      item.style.display =
-        text.includes(value) ? "block" : "none";
     });
 
   });
