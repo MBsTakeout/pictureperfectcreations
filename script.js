@@ -29,14 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ================= AUTH STATE ================= */
 
 auth.onAuthStateChanged(user => {
-
   authReady = true;
-
   updateUI(user);
   loadGallery();
 });
 
-/* ================= AUTH UI ================= */
+/* ================= AUTH ================= */
 
 function openAuth(){
   const modal = document.getElementById("authModal");
@@ -83,10 +81,9 @@ function logout(){
   auth.signOut();
 }
 
-/* ================= SECURITY CHECK ================= */
+/* ================= ADMIN CHECK ================= */
 
 function isAdmin(){
-
   const user = auth.currentUser;
 
   return (
@@ -179,6 +176,8 @@ function loadGallery(){
 
       if (loading) loading.style.display = "none";
 
+      const admin = isAdmin();
+
       snapshot.forEach(doc => {
 
         const d = doc.data();
@@ -191,10 +190,12 @@ function loadGallery(){
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title || ""}</p>
 
-          <div class="admin-controls">
-            <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
-            <button onclick="deleteImage('${id}')">Delete</button>
-          </div>
+          ${admin ? `
+            <div class="admin-controls">
+              <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
+              <button onclick="deleteImage('${id}')">Delete</button>
+            </div>
+          ` : ""}
         `;
 
         gallery.appendChild(div);
@@ -203,7 +204,7 @@ function loadGallery(){
     });
 }
 
-/* ================= EDIT / DELETE (LOCKED) ================= */
+/* ================= EDIT / DELETE ================= */
 
 async function editImage(id, oldTitle){
 
@@ -273,14 +274,17 @@ function filterCategory(category){
 
   document.querySelectorAll(".item").forEach(item => {
 
-    if (category === "all") return item.style.display = "block";
+    if (category === "all"){
+      item.style.display = "block";
+      return;
+    }
 
     item.style.display =
       item.classList.contains(category) ? "block" : "none";
   });
 }
 
-/* ================= UPLOAD TOGGLE ================= */
+/* ================= TOGGLE UPLOAD ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
