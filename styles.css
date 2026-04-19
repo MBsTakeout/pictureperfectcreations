@@ -1,3 +1,14 @@
+.auth-link{
+font-size:13px;
+color:#1877f2;
+cursor:pointer;
+text-align:center;
+}
+
+.auth-link:hover{
+text-decoration:underline;
+}
+
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
