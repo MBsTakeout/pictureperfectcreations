@@ -11,9 +11,7 @@ const db = firebase.firestore();
 
 const admins = ["bm015059@gmail.com"];
 
-let authReady = false;
-
-/* ================= INIT ================= */
+/* ================= SAFE INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -23,22 +21,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (addBtn) addBtn.style.display = "none";
   if (box) box.style.display = "none";
 
-  setupSearch();
-});
-
-/* ================= AUTH STATE ================= */
-
-auth.onAuthStateChanged(user => {
-  authReady = true;
-  updateUI(user);
   loadGallery();
 });
 
-/* ================= AUTH ================= */
+/* ================= AUTH MODAL ================= */
 
-function openAuth(){
+function openAuth(mode){
   const modal = document.getElementById("authModal");
-  if (modal) modal.style.display = "flex";
+  if (!modal) return;
+
+  modal.style.display = "flex";
+
+  const title = modal.querySelector("h2");
+  if (title){
+    title.innerText = mode === "signup" ? "Create Account" : "Welcome";
+  }
 }
 
 function closeAuth(){
@@ -46,8 +43,9 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
-function emailSignup(){
+/* ================= AUTH ================= */
 
+function emailSignup(){
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
@@ -59,7 +57,6 @@ function emailSignup(){
 }
 
 function emailLogin(){
-
   const email = document.getElementById("email")?.value;
   const pass = document.getElementById("password")?.value;
 
@@ -69,7 +66,6 @@ function emailLogin(){
 }
 
 function googleLogin(){
-
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
@@ -81,47 +77,71 @@ function logout(){
   auth.signOut();
 }
 
-/* ================= ADMIN CHECK ================= */
+/* ================= UI SYSTEM ================= */
 
-function isAdmin(){
-  const user = auth.currentUser;
-
-  return (
-    authReady &&
-    user &&
-    admins.includes(user.email)
-  );
-}
-
-/* ================= UI ================= */
+auth.onAuthStateChanged(user => updateUI(user));
 
 function updateUI(user){
 
   const btn = document.getElementById("authBtn");
   const addBtn = document.getElementById("addBtn");
 
+  /* LOGIN BUTTON */
   if (btn){
 
     if (!user){
+      btn.style.display = "inline-block";
       btn.innerHTML = "Sign in";
-      btn.onclick = openAuth;
+      btn.onclick = () => openAuth("login");
     } else {
+
       btn.innerHTML = user.photoURL
         ? `<img src="${user.photoURL}" class="avatar">`
         : "Profile";
 
-      btn.onclick = logout;
+      btn.onclick = toggleProfileMenu;
     }
   }
 
+  /* ADD BUTTON ONLY ADMINS */
   if (addBtn){
-    addBtn.style.display = isAdmin() ? "flex" : "none";
+    addBtn.style.display =
+      (user && admins.includes(user.email)) ? "flex" : "none";
   }
 }
+
+/* ================= PROFILE DROPDOWN ================= */
+
+function toggleProfileMenu(){
+  const menu = document.getElementById("profileMenu");
+  if (!menu) return;
+
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+}
+
+/* click outside closes menu */
+document.addEventListener("click", (e) => {
+
+  const menu = document.getElementById("profileMenu");
+  const btn = document.getElementById("authBtn");
+
+  if (!menu || !btn) return;
+
+  if (!menu.contains(e.target) && !btn.contains(e.target)){
+    menu.style.display = "none";
+  }
+});
 
 /* ================= CLOUDINARY UPLOAD ================= */
 
 async function uploadImage(){
+
+  const user = auth.currentUser;
+
+  if (!user || !admins.includes(user.email)){
+    return alert("Not allowed");
+  }
 
   const file = document.getElementById("file")?.files[0];
   const title = document.getElementById("title")?.value || "Untitled";
@@ -148,7 +168,8 @@ async function uploadImage(){
       title,
       category,
       imageUrl: data.secure_url,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      uploadedBy: user.email
     });
 
     alert("Uploaded!");
@@ -159,7 +180,7 @@ async function uploadImage(){
   }
 }
 
-/* ================= GALLERY ================= */
+/* ================= LOAD GALLERY ================= */
 
 function loadGallery(){
 
@@ -176,7 +197,8 @@ function loadGallery(){
 
       if (loading) loading.style.display = "none";
 
-      const admin = isAdmin();
+      const user = auth.currentUser;
+      const isAdmin = user && admins.includes(user.email);
 
       snapshot.forEach(doc => {
 
@@ -189,14 +211,21 @@ function loadGallery(){
         div.innerHTML = `
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title || ""}</p>
-
-          ${admin ? `
-            <div class="admin-controls">
-              <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
-              <button onclick="deleteImage('${id}')">Delete</button>
-            </div>
-          ` : ""}
         `;
+
+        /* ONLY ADMINS SEE CONTROLS */
+        if (isAdmin){
+
+          const controls = document.createElement("div");
+          controls.className = "admin-controls";
+
+          controls.innerHTML = `
+            <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
+            <button onclick="deleteImage('${id}')">Delete</button>
+          `;
+
+          div.appendChild(controls);
+        }
 
         gallery.appendChild(div);
       });
@@ -204,11 +233,15 @@ function loadGallery(){
     });
 }
 
-/* ================= EDIT / DELETE ================= */
+/* ================= EDIT ================= */
 
 async function editImage(id, oldTitle){
 
-  if (!isAdmin()) return alert("Not allowed");
+  const user = auth.currentUser;
+
+  if (!user || !admins.includes(user.email)){
+    return alert("Not allowed");
+  }
 
   const newTitle = prompt("Edit title:", oldTitle);
   if (!newTitle) return;
@@ -218,9 +251,15 @@ async function editImage(id, oldTitle){
   });
 }
 
+/* ================= DELETE ================= */
+
 async function deleteImage(id){
 
-  if (!isAdmin()) return alert("Not allowed");
+  const user = auth.currentUser;
+
+  if (!user || !admins.includes(user.email)){
+    return alert("Not allowed");
+  }
 
   if (!confirm("Delete this image?")) return;
 
@@ -230,7 +269,6 @@ async function deleteImage(id){
 /* ================= MODAL ================= */
 
 function openModal(img){
-
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modalImg");
 
@@ -239,16 +277,16 @@ function openModal(img){
 }
 
 function closeModal(){
-
   const modal = document.getElementById("modal");
   if (modal) modal.style.display = "none";
 }
 
 /* ================= SEARCH ================= */
 
-function setupSearch(){
+document.addEventListener("DOMContentLoaded", () => {
 
   const searchInput = document.getElementById("searchInput");
+
   if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
@@ -257,16 +295,15 @@ function setupSearch(){
 
     document.querySelectorAll(".item").forEach(item => {
 
-      const title = item.querySelector("p")?.innerText.toLowerCase() || "";
-      const category = item.className.toLowerCase();
+      const text = item.innerText.toLowerCase();
 
-      const match = title.includes(value) || category.includes(value);
-
-      item.style.display = match ? "block" : "none";
+      item.style.display =
+        text.includes(value) ? "block" : "none";
     });
 
   });
-}
+
+});
 
 /* ================= CATEGORY FILTER ================= */
 
@@ -284,7 +321,7 @@ function filterCategory(category){
   });
 }
 
-/* ================= TOGGLE UPLOAD ================= */
+/* ================= UPLOAD TOGGLE ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -292,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const box = document.getElementById("uploadBox");
 
   if (btn && box){
+
     btn.onclick = () => {
       box.style.display =
         box.style.display === "block" ? "none" : "block";
