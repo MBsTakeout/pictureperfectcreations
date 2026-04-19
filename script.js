@@ -43,38 +43,64 @@ function closeAuth(){
   if (modal) modal.style.display = "none";
 }
 
-/* ================= AUTH ================= */
+let authMode = "login"; // login OR signup
 
-function emailSignup(){
+function toggleAuthMode(){
+
+  authMode = authMode === "login" ? "signup" : "login";
+
+  const btn = document.getElementById("mainAuthBtn");
+  const switchText = document.getElementById("switchText");
+
+  if (authMode === "login"){
+    btn.innerText = "Sign in";
+    switchText.innerText = "Create account";
+  } else {
+    btn.innerText = "Create account";
+    switchText.innerText = "Log in";
+  }
+}
+
+/* ================= MAIN AUTH BUTTON ================= */
+
+function handleAuthAction(){
+
   const email = document.getElementById("email")?.value;
-  const pass = document.getElementById("password")?.value;
+  const password = document.getElementById("password")?.value;
 
-  if (!email || !pass) return alert("Fill in all fields");
+  if (!email || !password) return alert("Fill in all fields");
 
-  auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => alert("Account created!"))
-    .catch(err => alert(err.message));
+  if (authMode === "login"){
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => closeAuth())
+      .catch(err => alert(err.message));
+
+  } else {
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(async (userCred) => {
+
+        await userCred.user.sendEmailVerification();
+        alert("Account created! Check your email to verify.");
+        closeAuth();
+
+      })
+      .catch(err => alert(err.message));
+  }
 }
 
-function emailLogin(){
+/* ================= FORGOT PASSWORD ================= */
+
+function forgotPassword(){
+
   const email = document.getElementById("email")?.value;
-  const pass = document.getElementById("password")?.value;
 
-  auth.signInWithEmailAndPassword(email, pass)
-    .then(() => closeAuth())
+  if (!email) return alert("Enter your email first");
+
+  auth.sendPasswordResetEmail(email)
+    .then(() => alert("Password reset email sent"))
     .catch(err => alert(err.message));
-}
-
-function googleLogin(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider)
-    .then(() => closeAuth())
-    .catch(err => alert(err.message));
-}
-
-function logout(){
-  auth.signOut();
 }
 
 /* ================= UI SYSTEM ================= */
