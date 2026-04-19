@@ -16,14 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addBtn = document.getElementById("addBtn");
   const box = document.getElementById("uploadBox");
-  const searchInput = document.getElementById("searchInput");
 
   if (addBtn) addBtn.style.display = "none";
   if (box) box.style.display = "none";
 
   loadGallery();
-  setupSearch(); // live search
-
+  setupSearch();
 });
 
 /* ================= AUTH ================= */
@@ -91,10 +89,16 @@ function updateUI(user){
     }
   }
 
+  // ONLY ADMINS SEE + BUTTON
   if (addBtn){
-    addBtn.style.display =
-      (user && admins.includes(user.email)) ? "flex" : "none";
+    if (user && admins.includes(user.email)){
+      addBtn.style.display = "flex";
+    } else {
+      addBtn.style.display = "none";
+    }
   }
+
+  toggleAdminControls(user);
 }
 
 auth.onAuthStateChanged(user => {
@@ -124,10 +128,7 @@ async function uploadImage(){
 
     const data = await res.json();
 
-    if (!data.secure_url) {
-      console.log(data);
-      return alert("Upload failed");
-    }
+    if (!data.secure_url) return alert("Upload failed");
 
     await db.collection("gallery").add({
       title,
@@ -173,7 +174,7 @@ function loadGallery(){
           <img src="${d.imageUrl}" onclick="openModal(this)">
           <p>${d.title || ""}</p>
 
-          <div class="admin-controls">
+          <div class="admin-controls" data-id="${id}">
             <button onclick="editImage('${id}', '${d.title || ""}')">Edit</button>
             <button onclick="deleteImage('${id}')">Delete</button>
           </div>
@@ -182,12 +183,31 @@ function loadGallery(){
         gallery.appendChild(div);
       });
 
+      auth.currentUser && toggleAdminControls(auth.currentUser);
     });
+}
+
+/* ================= ADMIN CONTROL LOCK ================= */
+
+function toggleAdminControls(user){
+
+  document.querySelectorAll(".admin-controls").forEach(el => {
+
+    if (user && admins.includes(user.email)){
+      el.style.display = "flex";
+    } else {
+      el.style.display = "none";
+    }
+
+  });
 }
 
 /* ================= EDIT / DELETE ================= */
 
 async function editImage(id, oldTitle){
+
+  const user = auth.currentUser;
+  if (!user || !admins.includes(user.email)) return;
 
   const newTitle = prompt("Edit title:", oldTitle);
   if (!newTitle) return;
@@ -198,6 +218,9 @@ async function editImage(id, oldTitle){
 }
 
 async function deleteImage(id){
+
+  const user = auth.currentUser;
+  if (!user || !admins.includes(user.email)) return;
 
   if (!confirm("Delete this image?")) return;
 
@@ -219,7 +242,7 @@ function closeModal(){
   if (modal) modal.style.display = "none";
 }
 
-/* ================= LIVE SEARCH (FIXED) ================= */
+/* ================= LIVE SEARCH ================= */
 
 function setupSearch(){
 
@@ -228,40 +251,36 @@ function setupSearch(){
 
   searchInput.addEventListener("input", () => {
 
-    const value = searchInput.value.toLowerCase().trim();
-    const items = document.querySelectorAll(".item");
+    const value = searchInput.value.toLowerCase();
 
-    items.forEach(item => {
+    document.querySelectorAll(".item").forEach(item => {
 
-      const title = item.querySelector("p")?.innerText.toLowerCase() || "";
-      const category = item.className.toLowerCase();
+      const text = item.innerText.toLowerCase();
 
-      const match = title.includes(value) || category.includes(value);
-
-      item.style.display = match ? "block" : "none";
+      item.style.display = text.includes(value) ? "block" : "none";
     });
 
   });
 }
-/* ================= CATEGORY FILTER ================= */
+
+/* ================= CATEGORY FILTER FIX ================= */
 
 function filterCategory(category){
 
-  const items = document.querySelectorAll(".item");
-
-  items.forEach(item => {
+  document.querySelectorAll(".item").forEach(item => {
 
     if (category === "all"){
       item.style.display = "block";
       return;
     }
 
-    const match = item.classList.contains(category);
-
-    item.style.display = match ? "block" : "none";
+    item.style.display = item.classList.contains(category)
+      ? "block"
+      : "none";
   });
 }
-/* ================= TOGGLE UPLOAD BOX ================= */
+
+/* ================= TOGGLE UPLOAD ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
